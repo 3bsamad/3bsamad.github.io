@@ -1,34 +1,42 @@
-# Neural Network Visualizer — Spam Classifier
+# ML Visual Lab — Neural Network Spam Classifier
 
-A small interactive learning tool that explains a basic feedforward neural network step by step:
+An interactive, browser-only learning tool for understanding a feedforward neural network from the inside.
 
-1. Inputs
-2. Weighted sums
+The first lesson uses a tiny **spam vs not-spam** classification problem and exposes the full loop:
+
+1. numeric inputs
+2. weighted sums
 3. ReLU activation
-4. Output logit
-5. Sigmoid prediction
-6. Binary cross-entropy loss
-7. Backpropagation
-8. Gradient descent
+4. output logit
+5. sigmoid probability
+6. binary cross-entropy loss
+7. backpropagation
+8. gradient-descent update
 
-The first task is a tiny **spam vs not spam** classifier with four handcrafted numeric features.
+## What makes this visualizer different
 
-## Why this repo is simple
+The network does not just draw circles and arrows:
 
-This version intentionally uses:
+- weights are printed directly on their connections
+- during backprop, every connection shows its gradient `g = ∂L/∂w`
+- during the update step, each connection also shows `Δ = -ηg`
+- forward and backward signal flow is animated in opposite directions
+- a parameter inspector shows value, gradient and update side-by-side
+- prediction and loss are shown before and after updates
 
-- plain HTML
-- plain CSS
-- plain JavaScript
-- no backend
-- no npm dependencies
-- no build step
+## Stack
 
-That makes it ideal for **GitHub Pages**.
+No framework is required.
+
+```text
+index.html
+styles.css
+app.js
+```
+
+Everything runs client-side, making the project ideal for GitHub Pages.
 
 ## Run locally
-
-You can simply open `index.html`, but using a tiny local server is usually nicer:
 
 ```bash
 python -m http.server 8000
@@ -40,50 +48,43 @@ Then open:
 http://localhost:8000
 ```
 
-## Deploy to GitHub Pages
+## Deploy on GitHub Pages
 
-1. Create a new public GitHub repository.
-2. Upload these files to the repository root.
-3. Go to **Settings → Pages**.
-4. Under **Build and deployment**, choose:
-   - Source: **Deploy from a branch**
-   - Branch: **main**
-   - Folder: **/(root)**
+1. Create a public GitHub repository.
+2. Put the repository files in the root of `main`.
+3. Open **Settings → Pages**.
+4. Under **Build and deployment** choose:
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/(root)`
 5. Save.
 
-Your site will appear at:
+The page will be available at:
 
 ```text
 https://YOUR_USERNAME.github.io/YOUR_REPOSITORY_NAME/
 ```
 
-## Current architecture
+## Teaching network
 
 ```text
-4 input features
-      ↓
-3 hidden neurons
-      ↓
-ReLU
-      ↓
-1 output neuron
-      ↓
-Sigmoid
-      ↓
+4 handcrafted email features
+          ↓
+3 hidden neurons + ReLU
+          ↓
+1 output neuron + sigmoid
+          ↓
 P(spam)
 ```
 
-The model is intentionally tiny so every number can be inspected directly in the browser.
+Binary cross-entropy is used as the loss, with vanilla gradient descent for parameter updates.
 
-## Next ideas
+## Good next modules
 
-- manual weight editing
-- show gradients on every edge
-- animate forward/backward flow
-- mini training graph for loss
-- XOR lesson
-- softmax + multiclass lesson
-- activation comparison
-- optimizer comparison
-- CNN convolution visualizer
+- XOR: why hidden layers and nonlinearities matter
+- activation playground: ReLU vs sigmoid vs tanh
+- optimizer playground: SGD vs momentum vs Adam
+- regression: MSE and gradient descent on a line
+- multiclass classification: logits + softmax + cross entropy
+- convolution visualizer
 - attention visualizer
