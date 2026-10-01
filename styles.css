@@ -1096,6 +1096,11 @@ td {
     max-height: 560px;
   }
 
+  .edge-tag,
+  .bias-tag {
+    display: none;
+  }
+
   .result-strip {
     grid-template-columns: 1fr 1fr;
   }
