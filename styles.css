@@ -144,6 +144,7 @@ a:focus-visible {
 
 .visual-column {
   min-width: 0;
+  align-self: stretch;
   padding-top: 32px;
 }
 
@@ -1084,11 +1085,17 @@ body[data-scene="scene-output"] .status-dot {
 
   .story-shell {
     width: 100%;
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
   }
 
   .visual-column {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: stretch;
     padding: 0 8px;
+    pointer-events: none;
   }
 
   .network-stage {
@@ -1184,7 +1191,20 @@ body[data-scene="scene-output"] .status-dot {
   }
 
   .narrative-column {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    z-index: 5;
     margin-top: 0;
+    padding-top: 54dvh;
+    pointer-events: none;
+  }
+
+  .narrative-column .scene-nav,
+  .narrative-column .story-scene,
+  .narrative-column a,
+  .narrative-column button {
+    pointer-events: auto;
   }
 
   .scene-nav {
@@ -1196,6 +1216,10 @@ body[data-scene="scene-output"] .status-dot {
 
   .scene-stack {
     margin-top: 0;
+  }
+
+  .visual-column .network-stage {
+    pointer-events: auto;
   }
 
   .story-scene {
@@ -1231,6 +1255,10 @@ body[data-scene="scene-output"] .status-dot {
   .network-stage {
     height: 50dvh;
     min-height: 360px;
+  }
+
+  .narrative-column {
+    padding-top: 50dvh;
   }
 
   .stage-topline {
