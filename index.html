@@ -3,197 +3,178 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Interactive neural-network learning lab for forward pass, loss, backpropagation, gradients and gradient descent." />
-  <meta name="theme-color" content="#080a0f" />
-  <title>ML Visual Lab | Neural Network Spam Classifier</title>
+  <meta name="description" content="A scroll-driven neural-network explainer showing forward pass, loss, backpropagation and gradient descent on one spam email." />
+  <meta name="theme-color" content="#07090d" />
+  <title>ML Visual Lab — Watch a Neural Network Learn</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist/index.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist-mono/index.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   <link rel="stylesheet" href="styles.css" />
+
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand-block">
-        <div class="brand-mark" aria-hidden="true">ML</div>
-        <div class="brand-copy">
-          <p class="eyebrow">ML Visual Lab</p>
-          <h1>See a neural network think.</h1>
-          <p class="brand-subtitle">Forward pass, loss, backpropagation and gradient descent, visualized step by step.</p>
-        </div>
-      </div>
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollProgressBar"></span></div>
 
-      <div class="header-meta" aria-label="Teaching network">
-        <span class="tech-pill"><span>Network</span><strong>4 · 3 · 1</strong></span>
-        <span class="tech-pill"><span>Hidden</span><strong>ReLU</strong></span>
-        <span class="tech-pill"><span>Output</span><strong>Sigmoid + BCE</strong></span>
-      </div>
-    </header>
+  <header class="site-header">
+    <a class="wordmark" href="#scene-intro" aria-label="ML Visual Lab home">
+      <span class="wordmark-mark" aria-hidden="true">ML</span>
+      <span>ML Visual Lab</span>
+    </a>
+    <div class="header-note">Neural Networks 01 · Forward pass & backpropagation</div>
+  </header>
 
-    <section class="task-card" aria-labelledby="task-title">
-      <div class="task-intro">
-        <p class="section-kicker">The task</p>
-        <h2 id="task-title">Spam or not spam?</h2>
-        <p>Turn one email into four numeric features and learn a binary classifier.</p>
-      </div>
-
-      <div class="sample-area">
-        <div class="sample-picker">
-          <label for="sampleSelect">Sample email</label>
-          <select id="sampleSelect"></select>
-        </div>
-        <blockquote id="emailText" class="email-text"></blockquote>
-      </div>
-
-      <div class="target-area">
-        <span class="field-label">Ground truth</span>
-        <strong id="targetLabel" class="target-value"></strong>
-        <span class="target-help">y ∈ {0, 1}</span>
-      </div>
-
-      <div id="featureRow" class="feature-row" aria-label="Input features"></div>
-    </section>
-
-    <section class="workspace" aria-labelledby="solution-title">
-      <div class="workspace-head">
-        <div>
-          <p class="section-kicker">Training loop</p>
-          <h2 id="solution-title">Follow one sample through the network</h2>
-        </div>
-        <div class="legend" aria-label="Visualization legend">
-          <span><i class="legend-line forward-line"></i>forward signal</span>
-          <span><i class="legend-line gradient-line"></i>gradient</span>
-          <span><i class="legend-line update-line"></i>updated parameter</span>
-        </div>
-      </div>
-
-      <nav class="step-rail" id="stepRail" aria-label="Lesson steps"></nav>
-
-      <div class="workspace-main">
-        <section class="network-panel" aria-label="Neural network visualization">
-          <div class="network-toolbar">
-            <div class="phase-indicator">
-              <span class="pulse-dot" id="phaseDot"></span>
-              <strong id="phaseLabel">Ready</strong>
+  <main>
+    <section class="story-shell" aria-label="Interactive neural network lesson">
+      <div class="visual-column">
+        <div class="network-stage" id="network-stage">
+          <div class="stage-topline">
+            <div class="stage-status" aria-live="polite">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="stageStatus">Dormant network</span>
             </div>
-            <div class="network-hints">
-              <span><b>w</b> weight</span>
-              <span><b>g</b> ∂L/∂w</span>
-              <span><b>Δ</b> parameter update</span>
+            <div class="stage-legend" aria-label="Signal legend">
+              <span><i class="legend-mark forward"></i>forward</span>
+              <span><i class="legend-mark gradient"></i>gradient</span>
+              <span><i class="legend-mark update"></i>update</span>
             </div>
           </div>
 
-          <div class="network-wrap">
-            <svg id="networkSvg" viewBox="0 0 1080 520" role="img" aria-label="Interactive feedforward neural network"></svg>
-          </div>
-        </section>
-
-        <aside class="explain-panel">
-          <div class="explain-header">
-            <div>
-              <span class="field-label" id="stepCounter"></span>
-              <h3 id="stepTitle"></h3>
+          <article class="email-card" id="emailCard">
+            <div class="email-meta">
+              <span class="email-label">Incoming email</span>
+              <span class="spam-badge">unknown</span>
             </div>
-            <div class="step-kind" id="stepKind"></div>
+            <p id="emailText"></p>
+            <div class="feature-strip" id="featureStrip" aria-label="Extracted email features"></div>
+          </article>
+
+          <div class="network-frame">
+            <svg id="networkSvg" viewBox="0 0 1080 620" role="img" aria-label="Four input neurons feeding three hidden neurons, one output neuron and a loss module"></svg>
           </div>
 
-          <p id="stepDescription" class="step-description"></p>
+          <div class="instrument-rail">
+            <section class="math-panel" id="mathPanel" aria-label="Current equation">
+              <span class="rail-label">Current computation</span>
+              <div id="mathExpression" class="math-expression">Scroll to begin.</div>
+              <div id="mathDetail" class="math-detail"></div>
+            </section>
 
-          <div class="formula-box" id="formulaBox"></div>
+            <section class="metric-panel" aria-label="Current model values">
+              <div>
+                <span class="rail-label">Prediction</span>
+                <strong id="predictionMetric">—</strong>
+              </div>
+              <div>
+                <span class="rail-label">Loss</span>
+                <strong id="lossMetric">—</strong>
+              </div>
+            </section>
+          </div>
 
-          <div class="parameter-inspector" id="parameterInspector">
-            <div class="inspector-title">
-              <span class="field-label">Parameter inspector</span>
-              <span id="inspectorHint">Weights become trainable because gradients tell us how to move them.</span>
+          <div class="training-finale" id="trainingFinale" hidden>
+            <div class="finale-copy">
+              <span class="rail-label">Repeated learning</span>
+              <strong id="trainingSummary">Loss falls as the cycle repeats.</strong>
             </div>
-            <div id="parameterRows" class="parameter-rows"></div>
-          </div>
-
-          <div class="why-box">
-            <span class="field-label">Why it matters</span>
-            <p id="whyText"></p>
-          </div>
-        </aside>
-      </div>
-
-      <div class="control-dock">
-        <div class="lesson-controls">
-          <button id="prevStep" class="btn icon-btn" aria-label="Previous lesson step">Previous</button>
-          <button id="nextStep" class="btn primary">Next concept</button>
-          <button id="autoPlay" class="btn secondary">Play lesson</button>
-          <button id="restartLesson" class="btn ghost">Restart lesson</button>
-        </div>
-
-        <div class="divider" aria-hidden="true"></div>
-
-        <div class="training-controls">
-          <span class="control-label">Run</span>
-          <button id="runForward" class="btn phase-btn forward-btn">Forward</button>
-          <button id="runBackprop" class="btn phase-btn backprop-btn">Backprop</button>
-          <button id="updateWeights" class="btn phase-btn update-btn">Update weights</button>
-          <button id="trainTen" class="btn secondary">Train 10 epochs</button>
-          <button id="resetWeights" class="btn ghost">Reset</button>
-        </div>
-
-        <div class="lr-control">
-          <label for="learningRate">Learning rate <b>η</b></label>
-          <div class="slider-line">
-            <input id="learningRate" type="range" min="0.01" max="0.50" step="0.01" value="0.10" />
-            <output id="learningRateOutput">0.10</output>
+            <svg id="lossChart" viewBox="0 0 320 86" role="img" aria-label="Loss falling over repeated training epochs"></svg>
           </div>
         </div>
       </div>
 
-      <div class="result-strip" aria-live="polite">
-        <div class="metric">
-          <span>Prediction</span>
-          <strong id="predictionValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Target</span>
-          <strong id="targetValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Loss</span>
-          <strong id="lossValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Learning rate</span>
-          <strong id="learningRateValue">0.10</strong>
-        </div>
-        <div class="before-after">
-          <div>
-            <span>Before update</span>
-            <strong id="beforeSummary">–</strong>
-          </div>
-          <div class="history-arrow">→</div>
-          <div>
-            <span>After update</span>
-            <strong id="afterSummary">–</strong>
-          </div>
-        </div>
-      </div>
-    </section>
+      <aside class="narrative-column">
+        <nav class="scene-nav" id="sceneNav" aria-label="Lesson progress">
+          <button data-scene="scene-intro" aria-current="step"><span>01</span>Intro</button>
+          <button data-scene="scene-inputs"><span>02</span>Inputs</button>
+          <button data-scene="scene-weights"><span>03</span>Weights</button>
+          <button data-scene="scene-relu"><span>04</span>ReLU</button>
+          <button data-scene="scene-output"><span>05</span>Output</button>
+          <button data-scene="scene-loss"><span>06</span>Loss</button>
+          <button data-scene="scene-backprop"><span>07</span>Backprop</button>
+          <button data-scene="scene-update"><span>08</span>Update</button>
+          <button data-scene="scene-training"><span>09</span>Train</button>
+        </nav>
 
-    <section class="dataset-section">
-      <details>
-        <summary>Inspect the tiny teaching dataset</summary>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Suspicious words</th>
-                <th>Links</th>
-                <th>Sender trust</th>
-                <th>Urgency</th>
-                <th>Target</th>
-              </tr>
-            </thead>
-            <tbody id="datasetTableBody"></tbody>
-          </table>
+        <div class="scene-stack">
+          <section class="story-scene is-active" id="scene-intro" data-scene="scene-intro">
+            <p class="scene-index">Neural Networks 01</p>
+            <h1>Watch a neural network <em>think.</em></h1>
+            <p class="scene-lead">One suspicious email. Four numbers. A prediction, a mistake, and the chain of gradients that teaches the model what to change.</p>
+            <div class="scroll-cue" aria-hidden="true">
+              <span>Scroll to follow the computation</span>
+              <i></i>
+            </div>
+          </section>
+
+          <section class="story-scene" id="scene-inputs" data-scene="scene-inputs">
+            <p class="scene-index">01 · Representation</p>
+            <h2>The words become signals.</h2>
+            <p>Before a neural network can reason about an email, the message must become numbers. Here we compress the example into four normalized features.</p>
+            <p class="scene-insight">The network never sees “URGENT” directly. It receives <strong>x₁…x₄</strong> — the numerical evidence extracted from the message.</p>
+          </section>
+
+          <section class="story-scene" id="scene-weights" data-scene="scene-weights">
+            <p class="scene-index">02 · Weighted sum</p>
+            <h2>Every connection has an opinion.</h2>
+            <p>Each input sends a signal through a trainable weight. Strong positive weights amplify evidence; negative weights push in the opposite direction.</p>
+            <p class="scene-insight">Watch the pulses converge on the hidden layer. Each neuron receives a different weighted view of the same email.</p>
+          </section>
+
+          <section class="story-scene" id="scene-relu" data-scene="scene-relu">
+            <p class="scene-index">03 · Activation</p>
+            <h2>Neurons decide what gets through.</h2>
+            <p>The weighted sums enter ReLU. Positive evidence survives. Negative evidence is clamped to zero.</p>
+            <p class="scene-insight">One hidden neuron goes dark here. That visible shut-off is the nonlinearity that lets deeper networks learn richer patterns.</p>
+          </section>
+
+          <section class="story-scene" id="scene-output" data-scene="scene-output">
+            <p class="scene-index">04 · Prediction</p>
+            <h2>Three hidden signals become one belief.</h2>
+            <p>The hidden activations flow into the output neuron, forming a raw score — the logit. Sigmoid compresses that score into a probability.</p>
+            <p class="scene-insight">The result is no longer an unrestricted number. It becomes <strong>P(spam)</strong>, bounded between 0 and 1.</p>
+          </section>
+
+          <section class="story-scene" id="scene-loss" data-scene="scene-loss">
+            <p class="scene-index">05 · Objective</p>
+            <h2>Now the network learns how wrong it was.</h2>
+            <p>The prediction meets the known target. Binary cross-entropy turns that disagreement into one scalar: the loss.</p>
+            <p class="scene-insight">Training has one job: make this number smaller without being told directly which individual weight is responsible.</p>
+          </section>
+
+          <section class="story-scene" id="scene-backprop" data-scene="scene-backprop">
+            <p class="scene-index">06 · Gradients</p>
+            <h2>The error flows backward.</h2>
+            <p>Backpropagation applies the chain rule from the loss back through every trainable connection.</p>
+            <p class="scene-insight">The violet pulses are not data anymore. They are sensitivities — how strongly the loss reacts to each parameter.</p>
+          </section>
+
+          <section class="story-scene" id="scene-update" data-scene="scene-update">
+            <p class="scene-index">07 · Gradient descent</p>
+            <h2>Knowing the gradient changes the network.</h2>
+            <p>Each weight moves a small distance opposite its gradient. The learning rate controls how large that move is.</p>
+            <p class="scene-insight">The structure stays the same. The numbers inside it change — and that changes the next prediction.</p>
+          </section>
+
+          <section class="story-scene" id="scene-training" data-scene="scene-training">
+            <p class="scene-index">08 · Training loop</p>
+            <h2>Then it happens again. And again.</h2>
+            <p>Forward pass. Loss. Backpropagation. Update. Repeated across examples and epochs, the network gradually finds parameters that reduce error.</p>
+            <p class="scene-insight">A single update teaches the mechanism. Repetition turns that mechanism into learning.</p>
+            <a class="restart-link" href="#scene-intro">Replay from the beginning ↑</a>
+          </section>
         </div>
-      </details>
+      </aside>
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <noscript>
+    <p class="noscript">This lesson needs JavaScript for the interactive network, but the explanatory text remains available above.</p>
+  </noscript>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
