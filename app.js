@@ -93,11 +93,11 @@ function clampProbability(p) {
 }
 
 function fmt(value, digits = 3) {
-  return Number.isFinite(value) ? value.toFixed(digits) : "—";
+  return Number.isFinite(value) ? value.toFixed(digits) : "–";
 }
 
 function signed(value, digits = 3) {
-  if (!Number.isFinite(value)) return "—";
+  if (!Number.isFinite(value)) return "–";
   const n = value.toFixed(digits);
   return value > 0 ? `+${n}` : n;
 }
@@ -386,7 +386,7 @@ function renderStepText() {
   els.formulaBox.innerHTML = formulaHtml(step.formula());
 
   els.prevStep.disabled = currentStep === 0;
-  els.nextStep.textContent = currentStep === steps.length - 1 ? "Lesson complete ✓" : "Next concept →";
+  els.nextStep.textContent = currentStep === steps.length - 1 ? "Lesson complete" : "Next concept";
 
   els.stepRail.querySelectorAll(".step-tab").forEach((tab, i) => {
     tab.classList.toggle("active", i === currentStep);
@@ -406,10 +406,10 @@ function renderStatus() {
 function updateHistory(before, after) {
   els.beforeSummary.textContent = before
     ? `${(before.yHat * 100).toFixed(1)}% · loss ${fmt(before.loss)}`
-    : "—";
+    : "–";
   els.afterSummary.textContent = after
     ? `${(after.yHat * 100).toFixed(1)}% · loss ${fmt(after.loss)}`
-    : "—";
+    : "–";
 }
 
 function renderInspector() {
@@ -446,8 +446,8 @@ function renderInspector() {
       <div class="param-row">
         <span class="param-name">${name}</span>
         <span class="param-cell">${fmt(value)}</span>
-        <span class="param-cell gradient">${grad === null ? "—" : signed(grad)}</span>
-        <span class="param-cell delta">${delta === null ? "—" : signed(delta)}</span>
+        <span class="param-cell gradient">${grad === null ? "–" : signed(grad)}</span>
+        <span class="param-cell delta">${delta === null ? "–" : signed(delta)}</span>
       </div>
     `).join("")}
   `;
@@ -589,22 +589,27 @@ function deltaForGradient(g) {
 function renderNetwork() {
   const c = cache || forward();
   const focus = steps[currentStep].focus;
+  const compact = window.matchMedia("(max-width: 920px)").matches;
 
   if ((focus === "backprop" || focus === "update" || animation.phase === "backprop" || animation.phase === "update") && !grads) {
     backward();
   }
 
-  const inputX = 95;
-  const hiddenX = 455;
-  const outputX = 790;
-  const lossX = 1000;
-
-  const inputY = [95, 205, 315, 425];
-  const hiddenY = [145, 260, 375];
-  const outputY = 260;
-
   const showGradients = focus === "backprop" || focus === "update" || animation.phase === "backprop" || animation.phase === "update";
   const showDelta = focus === "update" || animation.phase === "update";
+
+  const inputPoints = compact
+    ? [[70, 110], [185, 110], [300, 110], [415, 110]]
+    : [[95, 95], [95, 205], [95, 315], [95, 425]];
+
+  const hiddenPoints = compact
+    ? [[125, 290], [245, 290], [365, 290]]
+    : [[455, 145], [455, 260], [455, 375]];
+
+  const outputPoint = compact ? [245, 455] : [790, 260];
+  const lossPoint = compact ? [245, 595] : [1000, 260];
+
+  els.networkSvg.setAttribute("viewBox", compact ? "0 0 490 670" : "0 0 1080 520");
 
   let edges = "";
 
@@ -613,21 +618,21 @@ function renderNetwork() {
       const [edgeState, tagState] = edgeVisualState("ih");
       const grad = showGradients ? gradientForW1(h, i) : null;
       const delta = showDelta ? deltaForGradient(grad) : null;
+      const [ix, iy] = inputPoints[i];
+      const [hx, hy] = hiddenPoints[h];
 
-      // Stagger labels so crossing edges remain readable.
-      const offsets = [-17, 0, 17];
       edges += edgeLine({
-        x1: inputX + 38,
-        y1: inputY[i],
-        x2: hiddenX - 38,
-        y2: hiddenY[h],
+        x1: compact ? ix : ix + 38,
+        y1: compact ? iy + 38 : iy,
+        x2: compact ? hx : hx - 38,
+        y2: compact ? hy - 38 : hy,
         weight: `w${h + 1}${i + 1}=${fmt(params.W1[h][i], 2)}`,
         grad: grad === null ? null : signed(grad, 3),
         delta: delta === null ? null : signed(delta, 3),
         edgeState,
         tagState,
-        tagT: 0.49,
-        tagYOffset: offsets[h]
+        tagT: compact ? 0.52 : 0.49,
+        tagYOffset: compact ? 0 : [-17, 0, 17][h]
       });
     }
   }
@@ -636,20 +641,20 @@ function renderNetwork() {
     const [edgeState, tagState] = edgeVisualState("ho");
     const grad = showGradients ? gradientForW2(h) : null;
     const delta = showDelta ? deltaForGradient(grad) : null;
-    const offsets = [-14, 0, 14];
+    const [hx, hy] = hiddenPoints[h];
 
     edges += edgeLine({
-      x1: hiddenX + 38,
-      y1: hiddenY[h],
-      x2: outputX - 38,
-      y2: outputY,
+      x1: compact ? hx : hx + 38,
+      y1: compact ? hy + 38 : hy,
+      x2: compact ? outputPoint[0] : outputPoint[0] - 38,
+      y2: compact ? outputPoint[1] - 38 : outputPoint[1],
       weight: `v${h + 1}=${fmt(params.W2[h], 2)}`,
       grad: grad === null ? null : signed(grad, 3),
       delta: delta === null ? null : signed(delta, 3),
       edgeState,
       tagState,
-      tagT: 0.55,
-      tagYOffset: offsets[h]
+      tagT: compact ? 0.5 : 0.55,
+      tagYOffset: compact ? 0 : [-14, 0, 14][h]
     });
   }
 
@@ -663,44 +668,65 @@ function renderNetwork() {
 
   const biasBackprop = showGradients;
 
+  const layerLabels = compact
+    ? `
+      <text class="layer-label" x="20" y="48">INPUT FEATURES</text>
+      <text class="layer-label" x="20" y="232">HIDDEN + ReLU</text>
+      <text class="layer-label" x="20" y="397">SIGMOID OUTPUT</text>
+      <text class="layer-label" x="20" y="540">BCE LOSS</text>
+    `
+    : `
+      <text class="layer-label" x="95" y="32" text-anchor="middle">INPUT FEATURES</text>
+      <text class="layer-label" x="455" y="32" text-anchor="middle">HIDDEN + ReLU</text>
+      <text class="layer-label" x="790" y="32" text-anchor="middle">SIGMOID OUTPUT</text>
+      <text class="layer-label" x="1000" y="32" text-anchor="middle">BCE LOSS</text>
+    `;
+
+  const inputNodes = inputPoints.map(([x, y], i) =>
+    nodeGroup(`x${i + 1}`, x, y, `x${["₁","₂","₃","₄"][i]}`, fmt(c.x[i], 2), nodeVisualState("input"))
+  ).join("");
+
+  const hiddenNodes = hiddenPoints.map(([x, y], i) =>
+    nodeGroup(`h${i + 1}`, x, y, `h${["₁","₂","₃"][i]}`, fmt(c.h[i]), nodeVisualState("hidden"))
+  ).join("");
+
+  const lossLine = compact
+    ? `<line class="edge ${lossEdgeState}" x1="${outputPoint[0]}" y1="${outputPoint[1] + 38}" x2="${lossPoint[0]}" y2="${lossPoint[1] - 47}"></line>`
+    : `<line class="edge ${lossEdgeState}" x1="${outputPoint[0] + 38}" y1="${outputPoint[1]}" x2="${lossPoint[0] - 65}" y2="${lossPoint[1]}"></line>`;
+
+  const hiddenBias = compact ? "" : `
+    <g class="bias-tag ${biasBackprop ? "backprop" : ""}">
+      <rect x="357" y="461" width="196" height="${biasBackprop ? 40 : 25}" rx="6"></rect>
+      <text x="455" y="477" text-anchor="middle">b = [${params.b1.map(v => fmt(v, 2)).join(", ")}]</text>
+      ${biasBackprop ? `<text class="bias-grad" x="455" y="493" text-anchor="middle">g = [${grads.db1.map(v => signed(v, 3)).join(", ")}]</text>` : ""}
+    </g>
+  `;
+
+  const outputBias = compact ? "" : `
+    <g class="bias-tag ${biasBackprop ? "backprop" : ""}">
+      <rect x="715" y="461" width="150" height="${biasBackprop ? 40 : 25}" rx="6"></rect>
+      <text x="790" y="477" text-anchor="middle">b_out = ${fmt(params.b2, 2)}</text>
+      ${biasBackprop ? `<text class="bias-grad" x="790" y="493" text-anchor="middle">g = ${signed(grads.db2, 3)}</text>` : ""}
+    </g>
+  `;
+
   els.networkSvg.innerHTML = `
-    <text class="layer-label" x="${inputX}" y="32" text-anchor="middle">INPUT FEATURES</text>
-    <text class="layer-label" x="${hiddenX}" y="32" text-anchor="middle">HIDDEN + ReLU</text>
-    <text class="layer-label" x="${outputX}" y="32" text-anchor="middle">SIGMOID OUTPUT</text>
-    <text class="layer-label" x="${lossX}" y="32" text-anchor="middle">BCE LOSS</text>
-
+    ${layerLabels}
     ${edges}
-
-    ${nodeGroup("x1", inputX, inputY[0], "x₁", fmt(c.x[0], 2), nodeVisualState("input"))}
-    ${nodeGroup("x2", inputX, inputY[1], "x₂", fmt(c.x[1], 2), nodeVisualState("input"))}
-    ${nodeGroup("x3", inputX, inputY[2], "x₃", fmt(c.x[2], 2), nodeVisualState("input"))}
-    ${nodeGroup("x4", inputX, inputY[3], "x₄", fmt(c.x[3], 2), nodeVisualState("input"))}
-
-    ${nodeGroup("h1", hiddenX, hiddenY[0], "h₁", fmt(c.h[0]), nodeVisualState("hidden"))}
-    ${nodeGroup("h2", hiddenX, hiddenY[1], "h₂", fmt(c.h[1]), nodeVisualState("hidden"))}
-    ${nodeGroup("h3", hiddenX, hiddenY[2], "h₃", fmt(c.h[2]), nodeVisualState("hidden"))}
-
-    ${nodeGroup("out", outputX, outputY, "ŷ", fmt(c.yHat), nodeVisualState("output"))}
+    ${inputNodes}
+    ${hiddenNodes}
+    ${nodeGroup("out", outputPoint[0], outputPoint[1], "ŷ", fmt(c.yHat), nodeVisualState("output"))}
 
     <g>
-      <line class="edge ${lossEdgeState}" x1="${outputX + 38}" y1="${outputY}" x2="${lossX - 65}" y2="${outputY}"></line>
-      <rect class="loss-card ${lossState}" x="${lossX - 65}" y="${outputY - 47}" width="130" height="94" rx="15"></rect>
-      <text class="loss-title" x="${lossX}" y="${outputY - 8}" text-anchor="middle">L = ${fmt(c.loss)}</text>
-      <text class="loss-subtext" x="${lossX}" y="${outputY + 14}" text-anchor="middle">target y = ${c.y}</text>
-      <text class="loss-subtext" x="${lossX}" y="${outputY + 31}" text-anchor="middle">${classLabel(c.y)}</text>
+      ${lossLine}
+      <rect class="loss-card ${lossState}" x="${lossPoint[0] - 65}" y="${lossPoint[1] - 47}" width="130" height="94" rx="12"></rect>
+      <text class="loss-title" x="${lossPoint[0]}" y="${lossPoint[1] - 8}" text-anchor="middle">L = ${fmt(c.loss)}</text>
+      <text class="loss-subtext" x="${lossPoint[0]}" y="${lossPoint[1] + 14}" text-anchor="middle">target y = ${c.y}</text>
+      <text class="loss-subtext" x="${lossPoint[0]}" y="${lossPoint[1] + 31}" text-anchor="middle">${classLabel(c.y)}</text>
     </g>
 
-    <g class="bias-tag ${biasBackprop ? "backprop" : ""}">
-      <rect x="${hiddenX - 98}" y="461" width="196" height="${biasBackprop ? 40 : 25}" rx="7"></rect>
-      <text x="${hiddenX}" y="477" text-anchor="middle">b = [${params.b1.map(v => fmt(v, 2)).join(", ")}]</text>
-      ${biasBackprop ? `<text class="bias-grad" x="${hiddenX}" y="493" text-anchor="middle">g = [${grads.db1.map(v => signed(v, 3)).join(", ")}]</text>` : ""}
-    </g>
-
-    <g class="bias-tag ${biasBackprop ? "backprop" : ""}">
-      <rect x="${outputX - 75}" y="461" width="150" height="${biasBackprop ? 40 : 25}" rx="7"></rect>
-      <text x="${outputX}" y="477" text-anchor="middle">b_out = ${fmt(params.b2, 2)}</text>
-      ${biasBackprop ? `<text class="bias-grad" x="${outputX}" y="493" text-anchor="middle">g = ${signed(grads.db2, 3)}</text>` : ""}
-    </g>
+    ${hiddenBias}
+    ${outputBias}
   `;
 }
 
@@ -718,7 +744,7 @@ function stopLessonAnimation() {
     clearInterval(lessonTimer);
     lessonTimer = null;
   }
-  els.autoPlay.textContent = "▶ Play lesson";
+  els.autoPlay.textContent = "Play lesson";
 }
 
 function stopPhaseAnimation() {
@@ -843,7 +869,7 @@ els.autoPlay.addEventListener("click", () => {
   }
 
   stopPhaseAnimation();
-  els.autoPlay.textContent = "⏸ Pause lesson";
+  els.autoPlay.textContent = "Pause lesson";
 
   lessonTimer = setInterval(() => {
     if (currentStep >= steps.length - 1) {
@@ -900,6 +926,9 @@ els.learningRate.addEventListener("input", () => {
   renderInspector();
   if (steps[currentStep].focus === "update" || animation.phase === "update") renderNetwork();
 });
+
+const networkLayoutQuery = window.matchMedia("(max-width: 920px)");
+networkLayoutQuery.addEventListener("change", () => renderNetwork());
 
 function init() {
   buildSampleSelect();
