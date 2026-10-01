@@ -3,33 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Interactive neural-network learning lab: forward pass, loss, backpropagation, gradients and gradient descent." />
-  <meta name="theme-color" content="#0a0d14" />
-  <title>ML Visual Lab — Neural Network Spam Classifier</title>
+  <meta name="description" content="Interactive neural-network learning lab for forward pass, loss, backpropagation, gradients and gradient descent." />
+  <meta name="theme-color" content="#080a0f" />
+  <title>ML Visual Lab | Neural Network Spam Classifier</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="brand-mark" aria-hidden="true">N</div>
-        <div>
+        <div class="brand-mark" aria-hidden="true">ML</div>
+        <div class="brand-copy">
           <p class="eyebrow">ML Visual Lab</p>
-          <h1>Neural Networks · From prediction to backprop</h1>
+          <h1>See a neural network think.</h1>
+          <p class="brand-subtitle">Forward pass, loss, backpropagation and gradient descent, visualized step by step.</p>
         </div>
       </div>
-      <div class="header-meta">
-        <span class="tech-pill">4 → 3 → 1</span>
-        <span class="tech-pill">ReLU</span>
-        <span class="tech-pill">Sigmoid + BCE</span>
+
+      <div class="header-meta" aria-label="Teaching network">
+        <span class="tech-pill"><span>Network</span><strong>4 · 3 · 1</strong></span>
+        <span class="tech-pill"><span>Hidden</span><strong>ReLU</strong></span>
+        <span class="tech-pill"><span>Output</span><strong>Sigmoid + BCE</strong></span>
       </div>
     </header>
 
     <section class="task-card" aria-labelledby="task-title">
       <div class="task-intro">
-        <p class="section-kicker">1 · The task</p>
+        <p class="section-kicker">The task</p>
         <h2 id="task-title">Spam or not spam?</h2>
-        <p>Turn an email into four numeric features and learn a binary classifier.</p>
+        <p>Turn one email into four numeric features and learn a binary classifier.</p>
       </div>
 
       <div class="sample-area">
@@ -41,7 +43,7 @@
       </div>
 
       <div class="target-area">
-        <span class="tiny-label">Ground truth</span>
+        <span class="field-label">Ground truth</span>
         <strong id="targetLabel" class="target-value"></strong>
         <span class="target-help">y ∈ {0, 1}</span>
       </div>
@@ -52,13 +54,13 @@
     <section class="workspace" aria-labelledby="solution-title">
       <div class="workspace-head">
         <div>
-          <p class="section-kicker">2 · How the solution works</p>
-          <h2 id="solution-title">Follow one sample through the entire training loop</h2>
+          <p class="section-kicker">Training loop</p>
+          <h2 id="solution-title">Follow one sample through the network</h2>
         </div>
-        <div class="legend">
-          <span><i class="legend-dot forward-dot"></i> forward signal</span>
-          <span><i class="legend-dot gradient-dot"></i> gradient</span>
-          <span><i class="legend-dot update-dot"></i> updated parameter</span>
+        <div class="legend" aria-label="Visualization legend">
+          <span><i class="legend-line forward-line"></i>forward signal</span>
+          <span><i class="legend-line gradient-line"></i>gradient</span>
+          <span><i class="legend-line update-line"></i>updated parameter</span>
         </div>
       </div>
 
@@ -72,8 +74,9 @@
               <strong id="phaseLabel">Ready</strong>
             </div>
             <div class="network-hints">
-              <span>Edge label: <b>w</b> = weight</span>
-              <span>Backprop: <b>g</b> = ∂L/∂w</span>
+              <span><b>w</b> weight</span>
+              <span><b>g</b> ∂L/∂w</span>
+              <span><b>Δ</b> parameter update</span>
             </div>
           </div>
 
@@ -85,7 +88,7 @@
         <aside class="explain-panel">
           <div class="explain-header">
             <div>
-              <span class="tiny-label" id="stepCounter"></span>
+              <span class="field-label" id="stepCounter"></span>
               <h3 id="stepTitle"></h3>
             </div>
             <div class="step-kind" id="stepKind"></div>
@@ -97,14 +100,14 @@
 
           <div class="parameter-inspector" id="parameterInspector">
             <div class="inspector-title">
-              <span class="tiny-label">Parameter inspector</span>
+              <span class="field-label">Parameter inspector</span>
               <span id="inspectorHint">Weights become trainable because gradients tell us how to move them.</span>
             </div>
             <div id="parameterRows" class="parameter-rows"></div>
           </div>
 
           <div class="why-box">
-            <span class="tiny-label">Why it exists</span>
+            <span class="field-label">Why it matters</span>
             <p id="whyText"></p>
           </div>
         </aside>
@@ -112,20 +115,20 @@
 
       <div class="control-dock">
         <div class="lesson-controls">
-          <button id="prevStep" class="btn icon-btn" aria-label="Previous lesson step">←</button>
-          <button id="nextStep" class="btn primary">Next concept →</button>
-          <button id="autoPlay" class="btn secondary">▶ Play lesson</button>
-          <button id="restartLesson" class="btn ghost">↻ Lesson</button>
+          <button id="prevStep" class="btn icon-btn" aria-label="Previous lesson step">Previous</button>
+          <button id="nextStep" class="btn primary">Next concept</button>
+          <button id="autoPlay" class="btn secondary">Play lesson</button>
+          <button id="restartLesson" class="btn ghost">Restart lesson</button>
         </div>
 
         <div class="divider" aria-hidden="true"></div>
 
         <div class="training-controls">
           <span class="control-label">Run</span>
-          <button id="runForward" class="btn phase-btn forward-btn">→ Forward</button>
-          <button id="runBackprop" class="btn phase-btn backprop-btn">← Backprop</button>
-          <button id="updateWeights" class="btn phase-btn update-btn">↓ Update weights</button>
-          <button id="trainTen" class="btn secondary">Train ×10 epochs</button>
+          <button id="runForward" class="btn phase-btn forward-btn">Forward</button>
+          <button id="runBackprop" class="btn phase-btn backprop-btn">Backprop</button>
+          <button id="updateWeights" class="btn phase-btn update-btn">Update weights</button>
+          <button id="trainTen" class="btn secondary">Train 10 epochs</button>
           <button id="resetWeights" class="btn ghost">Reset</button>
         </div>
 
@@ -141,15 +144,15 @@
       <div class="result-strip" aria-live="polite">
         <div class="metric">
           <span>Prediction</span>
-          <strong id="predictionValue">—</strong>
+          <strong id="predictionValue">–</strong>
         </div>
         <div class="metric">
           <span>Target</span>
-          <strong id="targetValue">—</strong>
+          <strong id="targetValue">–</strong>
         </div>
         <div class="metric">
           <span>Loss</span>
-          <strong id="lossValue">—</strong>
+          <strong id="lossValue">–</strong>
         </div>
         <div class="metric">
           <span>Learning rate</span>
@@ -158,12 +161,12 @@
         <div class="before-after">
           <div>
             <span>Before update</span>
-            <strong id="beforeSummary">—</strong>
+            <strong id="beforeSummary">–</strong>
           </div>
           <div class="history-arrow">→</div>
           <div>
             <span>After update</span>
-            <strong id="afterSummary">—</strong>
+            <strong id="afterSummary">–</strong>
           </div>
         </div>
       </div>
