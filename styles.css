@@ -874,6 +874,11 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  opacity: 1;
+  transform: none;
+}
+
+.js-ready .story-scene {
   opacity: .27;
   transform: translateY(28px);
   transition:
@@ -881,7 +886,7 @@ a:focus-visible {
     transform 1s var(--ease-heavy);
 }
 
-.story-scene.is-active {
+.js-ready .story-scene.is-active {
   opacity: 1;
   transform: translateY(0);
 }
