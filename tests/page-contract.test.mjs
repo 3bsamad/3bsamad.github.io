@@ -31,8 +31,12 @@ test("page exposes the V2 visualization contract", () => {
   assert.match(html, /katex/i);
 });
 
-test("CSS provides sticky, reduced-motion and overflow-safe layouts", () => {
+test("CSS provides a sticky network whose containing column spans the full story", () => {
+  assert.match(css, /\.visual-column\s*\{[^}]*align-self:\s*stretch/s);
   assert.match(css, /position:\s*sticky/);
+  assert.match(css, /@media \(max-width:\s*820px\)[\s\S]*?\.story-shell\s*\{[^}]*display:\s*grid[^}]*grid-template-columns:\s*1fr/s);
+  assert.match(css, /@media \(max-width:\s*820px\)[\s\S]*?\.visual-column\s*\{[^}]*grid-row:\s*1/s);
+  assert.match(css, /@media \(max-width:\s*820px\)[\s\S]*?\.narrative-column\s*\{[^}]*grid-row:\s*1[^}]*padding-top:/s);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /overflow-x:\s*clip|overflow-x:\s*hidden/);
   assert.doesNotMatch(css, /#networkSvg[^}]*min-width:\s*[1-9]/s);
