@@ -11,7 +11,7 @@ export const SCENES = Object.freeze([
 ]);
 
 const f = (value, digits=3) => Number(value).toFixed(digits);
-const signed = (value, digits=3) => \`${value >= 0 ? "+" : ""}${Number(value).toFixed(digits)}\`;
+const signed = (value, digits=3) => `${value >= 0 ? "+" : ""}${Number(value).toFixed(digits)}`;
 
 export function getSceneContent(sceneId, context) {
   const { snapshot, grads, params, nextParams, learningRate } = context;
@@ -20,78 +20,78 @@ export function getSceneContent(sceneId, context) {
 
   const content = {
     "scene-intro": {
-      latex: [String.raw\`x \\rightarrow h \\rightarrow \\hat y \\rightarrow \\mathcal{L}\`],
+      latex: [`x \\rightarrow h \\rightarrow \\hat y \\rightarrow \\mathcal{L}`],
       plainMath: ["x → h → ŷ → loss"],
       detail: "Scroll to follow a single email through the complete learning cycle."
     },
     "scene-inputs": {
-      latex: [String.raw\`x = [${snapshot.x.map(v => v.toFixed(2)).join(",\\; ")}]\`],
-      plainMath: [\`x = [${snapshot.x.map(v => v.toFixed(2)).join(", ")}]\`],
+      latex: [`x = [${snapshot.x.map(v => v.toFixed(2)).join(",\\; ")}]`],
+      plainMath: [`x = [${snapshot.x.map(v => v.toFixed(2)).join(", ")}]`],
       detail: "Suspicious words · links · sender trust · urgency"
     },
     "scene-weights": {
       latex: [
-        String.raw\`z_1 = \\sum_j w_{1j}x_j + b_1 = ${f(snapshot.z1[0])}\`,
-        String.raw\`w_{11}x_1 = ${f(params.W1[0][0],2)} \\times ${f(snapshot.x[0],2)}\`
+        `z_1 = \\sum_j w_{1j}x_j + b_1 = ${f(snapshot.z1[0])}`,
+        `w_{11}x_1 = ${f(params.W1[0][0],2)} \\times ${f(snapshot.x[0],2)}`
       ],
       plainMath: [
-        \`z1 = Σ(w1j xj) + b1 = ${f(snapshot.z1[0])}\`,
-        \`w11 x1 = ${f(params.W1[0][0],2)} × ${f(snapshot.x[0],2)}\`
+        `z1 = Σ(w1j xj) + b1 = ${f(snapshot.z1[0])}`,
+        `w11 x1 = ${f(params.W1[0][0],2)} × ${f(snapshot.x[0],2)}`
       ],
       detail: "Each hidden neuron computes its own weighted sum."
     },
     "scene-relu": {
       latex: [
-        String.raw\`h_{${hi+1}} = \\operatorname{ReLU}(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}\`,
-        String.raw\`\\operatorname{ReLU}(z)=\\max(0,z)\`
+        `h_{${hi+1}} = \\operatorname{ReLU}(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
+        `\\operatorname{ReLU}(z)=\\max(0,z)`
       ],
       plainMath: [
-        \`h${hi+1} = ReLU(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}\`,
+        `h${hi+1} = ReLU(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
         "ReLU(z) = max(0, z)"
       ],
       detail: snapshot.z1[hi] < 0 ? "Negative evidence is visibly clamped to zero." : "Positive evidence passes through."
     },
     "scene-output": {
       latex: [
-        String.raw\`z_{out} = ${f(snapshot.z2)}\`,
-        String.raw\`\\hat y = \\sigma(z_{out}) = ${f(snapshot.yHat)}\`
+        `z_{out} = ${f(snapshot.z2)}`,
+        `\\hat y = \\sigma(z_{out}) = ${f(snapshot.yHat)}`
       ],
-      plainMath: [\`z_out = ${f(snapshot.z2)}\`, \`ŷ = sigmoid(z_out) = ${f(snapshot.yHat)}\`],
-      detail: \`The network currently assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.\`
+      plainMath: [`z_out = ${f(snapshot.z2)}`, `ŷ = sigmoid(z_out) = ${f(snapshot.yHat)}`],
+      detail: `The network currently assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.`
     },
     "scene-loss": {
       latex: [
-        String.raw\`\\mathrm{BCE} = -[y\\ln\\hat y +(1-y)\\ln(1-\\hat y)]\`,
-        String.raw\`\\mathcal{L} = ${f(snapshot.loss)}\`
+        `\\mathrm{BCE} = -[y\\ln\\hat y +(1-y)\\ln(1-\\hat y)]`,
+        `\\mathcal{L} = ${f(snapshot.loss)}`
       ],
-      plainMath: ["BCE loss = -[y ln(ŷ) + (1-y) ln(1-ŷ)]", \`loss = ${f(snapshot.loss)}\`],
+      plainMath: ["BCE loss = -[y ln(ŷ) + (1-y) ln(1-ŷ)]", `loss = ${f(snapshot.loss)}`],
       detail: "The target is y = 1 (spam)."
     },
     "scene-backprop": {
       latex: [
-        String.raw\`\\frac{\\partial \\mathcal{L}}{\\partial z_{out}} = \\hat y-y = ${signed(grads.dz2)}\`,
-        String.raw\`\\frac{\\partial \\mathcal{L}}{\\partial v_1} = ${signed(grads.dW2[0])}\`
+        `\\frac{\\partial \\mathcal{L}}{\\partial z_{out}} = \\hat y-y = ${signed(grads.dz2)}`,
+        `\\frac{\\partial \\mathcal{L}}{\\partial v_1} = ${signed(grads.dW2[0])}`
       ],
       plainMath: [
-        \`∂L/∂z_out = ŷ - y = ${signed(grads.dz2)}\`,
-        \`gradient ∂L/∂v1 = ${signed(grads.dW2[0])}\`
+        `∂L/∂z_out = ŷ - y = ${signed(grads.dz2)}`,
+        `gradient ∂L/∂v1 = ${signed(grads.dW2[0])}`
       ],
       detail: "The direction reverses: gradients travel from the loss toward earlier parameters."
     },
     "scene-update": {
       latex: [
-        String.raw\`v_1' = v_1 - \\eta \\frac{\\partial \\mathcal{L}}{\\partial v_1}\`,
-        String.raw\`${f(params.W2[0])} - ${learningRate.toFixed(2)}(${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}\`
+        `v_1' = v_1 - \\eta \\frac{\\partial \\mathcal{L}}{\\partial v_1}`,
+        `${f(params.W2[0])} - ${learningRate.toFixed(2)}(${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`
       ],
       plainMath: [
         "v1 new = v1 old - eta × gradient",
-        \`${f(params.W2[0])} - ${learningRate.toFixed(2)} × (${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}\`,
-        \`Δ = ${signed(nextParams.W2[0]-params.W2[0])}\`
+        `${f(params.W2[0])} - ${learningRate.toFixed(2)} × (${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`,
+        `Δ = ${signed(nextParams.W2[0]-params.W2[0])}`
       ],
-      detail: \`η = ${learningRate.toFixed(2)}. The parameter moves opposite its gradient.\`
+      detail: `η = ${learningRate.toFixed(2)}. The parameter moves opposite its gradient.`
     },
     "scene-training": {
-      latex: [String.raw\`\\text{forward} \\rightarrow \\mathcal{L} \\rightarrow \\text{backprop} \\rightarrow \\text{update} \\rightarrow \\cdots\`],
+      latex: [`\\text{forward} \\rightarrow \\mathcal{L} \\rightarrow \\text{backprop} \\rightarrow \\text{update} \\rightarrow \\cdots`],
       plainMath: ["forward → loss → backprop → update → repeat"],
       detail: "Repeated cycles gradually reduce error over the training examples."
     }
