@@ -49,10 +49,10 @@ const textNode = (x, y, cls, value, anchor = "middle") => {
 function curve(a, b, mode) {
   if (mode === "compact") {
     const midY = (a.y + b.y) / 2;
-    return \`M ${a.x} ${a.y} C ${a.x} ${midY}, ${b.x} ${midY}, ${b.x} ${b.y}\`;
+    return `M ${a.x} ${a.y} C ${a.x} ${midY}, ${b.x} ${midY}, ${b.x} ${b.y}`;
   }
   const midX = (a.x + b.x) / 2;
-  return \`M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}\`;
+  return `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`;
 }
 
 function makeNeuron(id, label) {
@@ -80,7 +80,7 @@ function makeLoss() {
 }
 
 function key(group, a, b) {
-  return \`${group}-${a}-${b}\`;
+  return `${group}-${a}-${b}`;
 }
 
 export function createNetworkRenderer(svg, {
@@ -95,12 +95,12 @@ export function createNetworkRenderer(svg, {
   let currentScene = "scene-intro";
 
   const defs = create("defs");
-  defs.innerHTML = \`
+  defs.innerHTML = `
     <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
       <feGaussianBlur stdDeviation="4.5" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-  \`;
+  `;
   svg.appendChild(defs);
 
   const guideLayer = create("g", { class: "network-guides" });
@@ -110,8 +110,8 @@ export function createNetworkRenderer(svg, {
   svg.append(guideLayer, connectionLayer, signalLayer, neuronLayer);
 
   const neurons = {
-    inputs: ["x1","x2","x3","x4"].map((id, i) => makeNeuron(id, \`x${i + 1}\`)),
-    hidden: ["h1","h2","h3"].map((id, i) => makeNeuron(id, \`h${i + 1}\`)),
+    inputs: ["x1","x2","x3","x4"].map((id, i) => makeNeuron(id, `x${i + 1}`)),
+    hidden: ["h1","h2","h3"].map((id, i) => makeNeuron(id, `h${i + 1}`)),
     output: makeNeuron("output", "ŷ"),
     loss: makeLoss()
   };
@@ -177,12 +177,12 @@ export function createNetworkRenderer(svg, {
     conn.active.setAttribute("d", d);
     if (conn.label) {
       const t = conn.kind === "ih" ? 0.50 : 0.56;
-      conn.label.setAttribute("transform", \`translate(${a.x + (b.x-a.x)*t} ${a.y + (b.y-a.y)*t})\`);
+      conn.label.setAttribute("transform", `translate(${a.x + (b.x-a.x)*t} ${a.y + (b.y-a.y)*t})`);
     }
   }
 
   function positionNeuron(neuron, point) {
-    neuron.g.setAttribute("transform", \`translate(${point.x} ${point.y})\`);
+    neuron.g.setAttribute("transform", `translate(${point.x} ${point.y})`);
   }
 
   function drawGuides() {
@@ -197,7 +197,7 @@ export function createNetworkRenderer(svg, {
   }
 
   function positionAll() {
-    svg.setAttribute("viewBox", \`0 0 ${geometry.width} ${geometry.height}\`);
+    svg.setAttribute("viewBox", `0 0 ${geometry.width} ${geometry.height}`);
     neurons.inputs.forEach((n, i) => positionNeuron(n, geometry.inputs[i]));
     neurons.hidden.forEach((n, i) => positionNeuron(n, geometry.hidden[i]));
     positionNeuron(neurons.output, geometry.output);
@@ -227,22 +227,22 @@ export function createNetworkRenderer(svg, {
     });
     neurons.hidden.forEach((n, i) => {
       n.valueEl.textContent = snapshot.h[i].toFixed(3);
-      n.preEl.textContent = \`z=${snapshot.z1[i].toFixed(3)}\`;
+      n.preEl.textContent = `z=${snapshot.z1[i].toFixed(3)}`;
       n.g.dataset.zeroed = snapshot.h[i] === 0 ? "true" : "false";
     });
-    neurons.output.valueEl.textContent = \`${(snapshot.yHat*100).toFixed(1)}%\`;
-    neurons.output.preEl.textContent = \`z=${snapshot.z2.toFixed(3)}\`;
+    neurons.output.valueEl.textContent = `${(snapshot.yHat*100).toFixed(1)}%`;
+    neurons.output.preEl.textContent = `z=${snapshot.z2.toFixed(3)}`;
     neurons.loss.value.textContent = snapshot.loss.toFixed(3);
 
     connections.forEach((conn) => {
       if (conn.kind === "ih") {
         const weight = params.W1[conn.to][conn.from];
         conn.base.style.setProperty("--weight-width", (1.1 + Math.abs(weight)*2.2).toFixed(2));
-        conn.text.textContent = \`w=${weight.toFixed(2)}\`;
+        conn.text.textContent = `w=${weight.toFixed(2)}`;
       } else if (conn.kind === "ho") {
         const weight = params.W2[conn.from];
         conn.base.style.setProperty("--weight-width", (1.1 + Math.abs(weight)*2.2).toFixed(2));
-        conn.text.textContent = \`v=${weight.toFixed(2)}\`;
+        conn.text.textContent = `v=${weight.toFixed(2)}`;
       }
     });
   }
@@ -320,8 +320,8 @@ export function createNetworkRenderer(svg, {
       connections.forEach((conn) => {
         conn.group.classList.add("is-gradient","is-emphasized");
         if (layout === "desktop" && conn.label && grads) {
-          if (conn.kind === "ih") conn.text.textContent = \`g=${grads.dW1[conn.to][conn.from].toFixed(3)}\`;
-          if (conn.kind === "ho") conn.text.textContent = \`g=${grads.dW2[conn.from].toFixed(3)}\`;
+          if (conn.kind === "ih") conn.text.textContent = `g=${grads.dW1[conn.to][conn.from].toFixed(3)}`;
+          if (conn.kind === "ho") conn.text.textContent = `g=${grads.dW2[conn.from].toFixed(3)}`;
           conn.label.classList.add("is-visible");
         }
       });
@@ -345,7 +345,7 @@ export function createNetworkRenderer(svg, {
 
   function pulsePath(path, colorClass, reverse=false, delay=0) {
     if (reducedMotion) return;
-    const pulse = create("circle", { r:5, class:\`signal-pulse ${colorClass}\` });
+    const pulse = create("circle", { r:5, class:`signal-pulse ${colorClass}` });
     signalLayer.appendChild(pulse);
     const length = path.getTotalLength?.() || 1;
     const update = (progress) => {
