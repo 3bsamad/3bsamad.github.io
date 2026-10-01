@@ -1,3 +1,4 @@
+document.documentElement.classList.add("js-ready");
 import {
   TEACHING_SAMPLE,
   FEATURES,
