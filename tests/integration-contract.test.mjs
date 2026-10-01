@@ -6,7 +6,8 @@ const app = readFileSync(new URL("../app.js", import.meta.url), "utf8");
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
 
-test("app composes the V2 modules", () => {
+test("app composes the V2 modules and only enables dimmed story states after JS starts", () => {
+  assert.match(app, /document\.documentElement\.classList\.add\(["']js-ready["']\)/);
   for (const module of ["./model.js","./network-renderer.js","./scene-content.js","./scroll-scenes.js"]) {
     assert.match(app, new RegExp(module.replace(".", "\\.")));
   }
