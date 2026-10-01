@@ -17,7 +17,7 @@ export const INITIAL_PARAMS = Object.freeze({
     Object.freeze([0.15, 0.60, -0.45, 0.35]),
     Object.freeze([-0.35, 0.20, 0.65, -0.10])
   ]),
-  b1: Object.freeze([0.05, -0.10, 0.15]),
+  b1: Object.freeze([0.05, -0.10, 0.05]),
   W2: Object.freeze([0.60, -0.40, 0.55]),
   b2: -0.05
 });
