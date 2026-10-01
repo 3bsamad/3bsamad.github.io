@@ -1,4 +1,3 @@
-document.documentElement.classList.add("js-ready");
 import {
   TEACHING_SAMPLE,
   FEATURES,
@@ -11,6 +10,8 @@ import {
 import { createNetworkRenderer } from "./network-renderer.js";
 import { SCENES, getSceneContent, renderMath } from "./scene-content.js";
 import { createScrollStory } from "./scroll-scenes.js";
+
+document.documentElement.classList.add("js-ready");
 
 const learningRate = 0.10;
 const snapshot = forward(INITIAL_PARAMS, TEACHING_SAMPLE);
