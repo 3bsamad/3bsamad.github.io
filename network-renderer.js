@@ -255,6 +255,10 @@ export function createNetworkRenderer(svg, {
     connections.forEach((conn) => {
       conn.group.classList.remove("is-forward","is-gradient","is-updated","is-emphasized");
       conn.label?.classList.remove("is-visible");
+      if (params && conn.text) {
+        if (conn.kind === "ih") conn.text.textContent = `w=${params.W1[conn.to][conn.from].toFixed(2)}`;
+        if (conn.kind === "ho") conn.text.textContent = `v=${params.W2[conn.from].toFixed(2)}`;
+      }
     });
     signalLayer.replaceChildren();
   }
