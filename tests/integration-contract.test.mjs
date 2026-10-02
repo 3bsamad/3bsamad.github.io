@@ -25,3 +25,16 @@ test("README documents the scroll-driven single-sample V2", () => {
   assert.match(readme, /one|single/i);
   assert.match(readme, /persistent SVG/i);
 });
+
+
+test("scroll scenes use a symmetric boundary when reversing", () => {
+  const scroll = readFileSync(new URL("../scroll-scenes.js", import.meta.url), "utf8");
+  assert.match(scroll, /onLeaveBack:\s*\(\)\s*=>\s*activate\(/);
+  assert.doesNotMatch(scroll, /onEnterBack:\s*\(\)\s*=>\s*activate\(section\.id\)/);
+});
+
+test("renderer cancels in-flight motion before applying a canonical scene", () => {
+  const renderer = readFileSync(new URL("../network-renderer.js", import.meta.url), "utf8");
+  assert.match(renderer, /function cancelMotion\(/);
+  assert.match(renderer, /function applyScene[\s\S]*?cancelMotion\(\)[\s\S]*?clearStates\(\)/);
+});
