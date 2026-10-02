@@ -29,13 +29,14 @@ export function createScrollStory({
 
   if (gsap && ScrollTrigger && !reducedMotion) {
     gsap.registerPlugin(ScrollTrigger);
-    sections.forEach((section) => {
+    sections.forEach((section, index) => {
+      const previous = sections[Math.max(0, index - 1)];
       disposables.push(ScrollTrigger.create({
         trigger: section,
         start: "top 58%",
         end: "bottom 42%",
         onEnter: () => activate(section.id),
-        onEnterBack: () => activate(section.id)
+        onLeaveBack: () => activate(previous.id, { immediate: true })
       }));
     });
   } else if ("IntersectionObserver" in globalThis) {
