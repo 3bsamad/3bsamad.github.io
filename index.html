@@ -128,7 +128,7 @@
             <p class="scene-index">03 · Activation</p>
             <h2>Neurons decide what gets through.</h2>
             <p>The weighted sums enter ReLU. Positive evidence survives. Negative evidence is clamped to zero.</p>
-            <p class="scene-insight">One hidden neuron goes dark here. That visible shut-off is the nonlinearity that lets deeper networks learn richer patterns.</p>
+            <p class="scene-insight">The third hidden neuron is still computed, but its negative pre-activation is <strong>clamped to 0</strong>. The amber state marks that ReLU decision explicitly.</p>
           </section>
 
           <section class="story-scene" id="scene-output" data-scene="scene-output">
