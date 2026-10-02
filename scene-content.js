@@ -107,7 +107,7 @@ export function getSceneContent(sceneId, context) {
       ],
       plainMath: [
         `∂L/∂z_out = ${f(snapshot.yHat)} - 1 = ${signed(grads.dz2)}`,
-        `∂L/∂v1 = ${signed(grads.dz2)} × ${f(snapshot.h[0])} = ${signed(grads.dW2[0])}`
+        `gradient ∂L/∂v1 = ${signed(grads.dz2)} × ${f(snapshot.h[0])} = ${signed(grads.dW2[0])}`
       ],
       detail: `For h3, ReLU'(-0.090)=0, so its incoming weight gradients are zero in this step.`
     },
