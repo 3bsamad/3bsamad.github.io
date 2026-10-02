@@ -41,3 +41,19 @@ test("CSS provides a sticky network whose containing column spans the full story
   assert.match(css, /overflow-x:\s*clip|overflow-x:\s*hidden/);
   assert.doesNotMatch(css, /#networkSvg[^}]*min-width:\s*[1-9]/s);
 });
+
+
+test("desktop stage reserves the main height for the network instead of the email card", () => {
+  assert.match(css, /\.network-stage\s*\{[^}]*grid-template-rows:\s*auto\s+minmax\(0,\s*1fr\)\s+auto\s+auto/s);
+  assert.match(css, /\.email-card\s*\{[^}]*position:\s*absolute/s);
+  assert.match(css, /body\[data-scene="scene-weights"\][\s\S]*?\.email-card[^}]*opacity:\s*0/s);
+  assert.match(css, /#networkSvg\s*\{[^}]*display:\s*block/s);
+});
+
+
+test("email staging area does not cover the network and zeroed ReLU neurons are visually distinct", () => {
+  assert.match(css, /body\[data-scene="scene-intro"\][\s\S]*?\.network-frame[^}]*padding-top:/s);
+  assert.match(css, /body\[data-scene="scene-inputs"\][\s\S]*?\.network-frame[^}]*padding-top:/s);
+  assert.match(css, /\.neuron\.is-zeroed\s*\{[^}]*opacity:\s*1/s);
+  assert.match(css, /\.neuron\.is-zeroed\s+\.neuron-halo[^}]*fill:\s*var\(--amber-soft\)/s);
+});

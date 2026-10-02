@@ -35,3 +35,37 @@ test("output, loss, backprop and update scenes contain live numeric math", () =>
   assert.match(update, /0\.10/);
   assert.match(update, /new|Δ|eta|η/i);
 });
+
+
+test("weighted-sum scene shows a full numeric substitution", () => {
+  const weights = getSceneContent("scene-weights", context).plainMath.join(" ");
+  assert.match(weights, /0\.55.*0\.85/);
+  assert.match(weights, /-0\.25.*0\.80/);
+  assert.match(weights, /0\.30.*0\.15/);
+  assert.match(weights, /0\.20.*1\.00/);
+  assert.match(weights, /0\.563/);
+});
+
+test("output and loss scenes show actual numerical computation", () => {
+  const output = getSceneContent("scene-output", context).plainMath.join(" ");
+  assert.match(output, /0\.60.*0\.563/);
+  assert.match(output, /-0\.40.*0\.790/);
+  assert.match(output, /-0\.050/);
+  assert.match(output, /0\.493/);
+
+  const loss = getSceneContent("scene-loss", context).plainMath.join(" ");
+  assert.match(loss, /-ln\(0\.493\)/);
+  assert.match(loss, /0\.707/);
+});
+
+test("backprop and update scenes show substituted gradient arithmetic", () => {
+  const backprop = getSceneContent("scene-backprop", context).plainMath.join(" ");
+  assert.match(backprop, /0\.493 - 1/);
+  assert.match(backprop, /-0\.507.*0\.563/);
+
+  const update = getSceneContent("scene-update", context).plainMath.join(" ");
+  assert.match(update, /0\.600/);
+  assert.match(update, /0\.10/);
+  assert.match(update, /-0\.285/);
+  assert.match(update, /0\.629/);
+});
