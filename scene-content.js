@@ -73,7 +73,7 @@ export function getSceneContent(sceneId, context) {
         `h = [${snapshot.h.map(v => f(v)).join(",\\; ")}]`
       ],
       plainMath: [
-        `h${hi+1} = max(0, ${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
+        `h${hi+1} = ReLU(${f(snapshot.z1[hi])}) = max(0, ${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
         `h = [${snapshot.h.map(v => f(v)).join(", ")}]`
       ],
       detail: "h3 was computed normally, then ReLU clamped its negative pre-activation to zero."
@@ -84,8 +84,8 @@ export function getSceneContent(sceneId, context) {
         `\\hat y = \\frac{1}{1+e^{${f(-snapshot.z2)}}} = ${f(snapshot.yHat)}`
       ],
       plainMath: [
-        `z_out = ${outputNumeric} ${params.b2 < 0 ? "-" : "+"} ${f(Math.abs(params.b2))} = ${f(snapshot.z2)}`,
-        `ŷ = 1 / (1 + e^${f(-snapshot.z2)}) = ${f(snapshot.yHat)}`
+        `z_out = ${outputNumeric} + (${f(params.b2)}) = ${f(snapshot.z2)}`,
+        `ŷ = sigmoid(z_out) = 1 / (1 + e^${f(-snapshot.z2)}) = ${f(snapshot.yHat)}`
       ],
       detail: `The network assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.`
     },
