@@ -93,6 +93,7 @@ export function createNetworkRenderer(svg, {
   let grads = null;
   let params = null;
   let currentScene = "scene-intro";
+  const motionTweens = new Set();
 
   const defs = create("defs");
   defs.innerHTML = `
@@ -198,6 +199,7 @@ export function createNetworkRenderer(svg, {
 
   function positionAll() {
     svg.setAttribute("viewBox", `0 0 ${geometry.width} ${geometry.height}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     neurons.inputs.forEach((n, i) => positionNeuron(n, geometry.inputs[i]));
     neurons.hidden.forEach((n, i) => positionNeuron(n, geometry.hidden[i]));
     positionNeuron(neurons.output, geometry.output);
@@ -247,6 +249,15 @@ export function createNetworkRenderer(svg, {
     });
   }
 
+  function cancelMotion() {
+    motionTweens.forEach((tween) => tween.kill?.());
+    motionTweens.clear();
+    if (gsap) {
+      gsap.killTweensOf([...connections.values()].map((conn) => conn.active));
+    }
+    signalLayer.replaceChildren();
+  }
+
   function clearStates() {
     [...neurons.inputs,...neurons.hidden,neurons.output].forEach((n) => {
       n.g.classList.remove("is-active","is-receiving","is-gradient","is-updated","is-zeroed");
@@ -255,6 +266,7 @@ export function createNetworkRenderer(svg, {
     connections.forEach((conn) => {
       conn.group.classList.remove("is-forward","is-gradient","is-updated","is-emphasized");
       conn.label?.classList.remove("is-visible");
+      conn.active.style.removeProperty("opacity");
       if (params && conn.text) {
         if (conn.kind === "ih") conn.text.textContent = `w=${params.W1[conn.to][conn.from].toFixed(2)}`;
         if (conn.kind === "ho") conn.text.textContent = `v=${params.W2[conn.from].toFixed(2)}`;
@@ -265,6 +277,7 @@ export function createNetworkRenderer(svg, {
 
   function applyScene(sceneId, { immediate=false } = {}) {
     currentScene = sceneId;
+    cancelMotion();
     clearStates();
 
     if (sceneId === "scene-intro") return;
@@ -356,11 +369,16 @@ export function createNetworkRenderer(svg, {
 
     if (gsap) {
       const tracker = { p:0 };
-      gsap.to(tracker, {
+      let tween;
+      tween = gsap.to(tracker, {
         p:1, delay, duration:1.05, ease:"power1.inOut",
         onUpdate:() => update(tracker.p),
-        onComplete:() => pulse.remove()
+        onComplete:() => {
+          motionTweens.delete(tween);
+          pulse.remove();
+        }
       });
+      motionTweens.add(tween);
     } else {
       update(1);
       setTimeout(() => pulse.remove(), 220);
@@ -383,11 +401,20 @@ export function createNetworkRenderer(svg, {
 
   function flashUpdate() {
     if (reducedMotion || !gsap) return;
-    gsap.fromTo(
+    let tween;
+    tween = gsap.fromTo(
       [...connections.values()].map((c) => c.active),
       { opacity:0.25 },
-      { opacity:1, duration:0.35, yoyo:true, repeat:1, stagger:0.015 }
+      {
+        opacity:1,
+        duration:0.35,
+        yoyo:true,
+        repeat:1,
+        stagger:0.015,
+        onComplete:() => motionTweens.delete(tween)
+      }
     );
+    motionTweens.add(tween);
   }
 
   buildConnections();
