@@ -349,7 +349,7 @@ a:focus-visible {
 
 body[data-scene="scene-intro"] .network-frame,
 body[data-scene="scene-inputs"] .network-frame {
-  padding-top: 150px;
+  padding-top: 180px;
 }
 
 #networkSvg {
