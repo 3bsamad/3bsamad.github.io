@@ -14,6 +14,11 @@ const f = (value, digits=3) => Number(value).toFixed(digits);
 const signed = (value, digits=3) => `${value >= 0 ? "+" : ""}${Number(value).toFixed(digits)}`;
 const paren = (value, digits=2) => value < 0 ? `(${f(value, digits)})` : f(value, digits);
 const product = (a, b, digits=3) => f(a * b, digits);
+const sumParts = (values, digits=3) => values.map((value, i) => {
+  const magnitude = f(Math.abs(value), digits);
+  if (i === 0) return value < 0 ? `-${magnitude}` : magnitude;
+  return `${value < 0 ? "-" : "+"} ${magnitude}`;
+}).join(" ");
 
 export function getSceneContent(sceneId, context) {
   const { snapshot, grads, params, nextParams, learningRate } = context;
@@ -28,9 +33,9 @@ export function getSceneContent(sceneId, context) {
   const z1Numeric = z1Terms
     .map(({ weight, x }) => `${paren(weight)} × ${f(x, 2)}`)
     .join(" + ");
-  const z1Contributions = z1Terms
-    .map(({ contribution }) => signed(contribution))
-    .join(" ");
+  const z1ContributionSum = sumParts(
+    [...z1Terms.map(({ contribution }) => contribution), params.b1[0]]
+  );
   const outputTerms = params.W2.map((weight, i) => ({
     weight,
     h: snapshot.h[i],
@@ -58,7 +63,7 @@ export function getSceneContent(sceneId, context) {
       ],
       plainMath: [
         `z1 = ${z1Numeric} + ${f(params.b1[0], 2)}`,
-        `z1 = ${z1Contributions} + ${signed(params.b1[0])} = ${f(snapshot.z1[0])}`
+        `z1 = ${z1ContributionSum} = ${f(snapshot.z1[0])}`
       ],
       detail: `All hidden sums: z = [${snapshot.z1.map(v => f(v)).join(", ")}]`
     },
@@ -79,7 +84,7 @@ export function getSceneContent(sceneId, context) {
         `\\hat y = \\frac{1}{1+e^{${f(-snapshot.z2)}}} = ${f(snapshot.yHat)}`
       ],
       plainMath: [
-        `z_out = ${outputNumeric} + ${f(params.b2)} = ${f(snapshot.z2)}`,
+        `z_out = ${outputNumeric} ${params.b2 < 0 ? "-" : "+"} ${f(Math.abs(params.b2))} = ${f(snapshot.z2)}`,
         `ŷ = 1 / (1 + e^${f(-snapshot.z2)}) = ${f(snapshot.yHat)}`
       ],
       detail: `The network assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.`
