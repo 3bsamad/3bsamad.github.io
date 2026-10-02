@@ -12,11 +12,33 @@ export const SCENES = Object.freeze([
 
 const f = (value, digits=3) => Number(value).toFixed(digits);
 const signed = (value, digits=3) => `${value >= 0 ? "+" : ""}${Number(value).toFixed(digits)}`;
+const paren = (value, digits=2) => value < 0 ? `(${f(value, digits)})` : f(value, digits);
+const product = (a, b, digits=3) => f(a * b, digits);
 
 export function getSceneContent(sceneId, context) {
   const { snapshot, grads, params, nextParams, learningRate } = context;
   const clampIndex = snapshot.z1.findIndex((v) => v < 0);
   const hi = clampIndex >= 0 ? clampIndex : 0;
+
+  const z1Terms = params.W1[0].map((weight, i) => ({
+    weight,
+    x: snapshot.x[i],
+    contribution: weight * snapshot.x[i]
+  }));
+  const z1Numeric = z1Terms
+    .map(({ weight, x }) => `${paren(weight)} × ${f(x, 2)}`)
+    .join(" + ");
+  const z1Contributions = z1Terms
+    .map(({ contribution }) => signed(contribution))
+    .join(" ");
+  const outputTerms = params.W2.map((weight, i) => ({
+    weight,
+    h: snapshot.h[i],
+    contribution: weight * snapshot.h[i]
+  }));
+  const outputNumeric = outputTerms
+    .map(({ weight, h }) => `${paren(weight)} × ${f(h)}`)
+    .join(" + ");
 
   const content = {
     "scene-intro": {
@@ -31,64 +53,69 @@ export function getSceneContent(sceneId, context) {
     },
     "scene-weights": {
       latex: [
-        `z_1 = \\sum_j w_{1j}x_j + b_1 = ${f(snapshot.z1[0])}`,
-        `w_{11}x_1 = ${f(params.W1[0][0],2)} \\times ${f(snapshot.x[0],2)}`
+        `z_1 = (0.55)(0.85) + (-0.25)(0.80) + (0.30)(0.15) + (0.20)(1.00) + 0.05`,
+        `z_1 = 0.468 - 0.200 + 0.045 + 0.200 + 0.050 = ${f(snapshot.z1[0])}`
       ],
       plainMath: [
-        `z1 = Σ(w1j xj) + b1 = ${f(snapshot.z1[0])}`,
-        `w11 x1 = ${f(params.W1[0][0],2)} × ${f(snapshot.x[0],2)}`
+        `z1 = ${z1Numeric} + ${f(params.b1[0], 2)}`,
+        `z1 = ${z1Contributions} + ${signed(params.b1[0])} = ${f(snapshot.z1[0])}`
       ],
-      detail: "Each hidden neuron computes its own weighted sum."
+      detail: `All hidden sums: z = [${snapshot.z1.map(v => f(v)).join(", ")}]`
     },
     "scene-relu": {
       latex: [
-        `h_{${hi+1}} = \\operatorname{ReLU}(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
-        `\\operatorname{ReLU}(z)=\\max(0,z)`
+        `h_{${hi+1}} = \\max(0,${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
+        `h = [${snapshot.h.map(v => f(v)).join(",\\; ")}]`
       ],
       plainMath: [
-        `h${hi+1} = ReLU(${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
-        "ReLU(z) = max(0, z)"
+        `h${hi+1} = max(0, ${f(snapshot.z1[hi])}) = ${f(snapshot.h[hi])}`,
+        `h = [${snapshot.h.map(v => f(v)).join(", ")}]`
       ],
-      detail: snapshot.z1[hi] < 0 ? "Negative evidence is visibly clamped to zero." : "Positive evidence passes through."
+      detail: "h3 was computed normally, then ReLU clamped its negative pre-activation to zero."
     },
     "scene-output": {
       latex: [
-        `z_{out} = ${f(snapshot.z2)}`,
-        `\\hat y = \\sigma(z_{out}) = ${f(snapshot.yHat)}`
+        `z_{out} = (0.60)(${f(snapshot.h[0])}) + (-0.40)(${f(snapshot.h[1])}) + (0.55)(${f(snapshot.h[2])}) - 0.050 = ${f(snapshot.z2)}`,
+        `\\hat y = \\frac{1}{1+e^{${f(-snapshot.z2)}}} = ${f(snapshot.yHat)}`
       ],
-      plainMath: [`z_out = ${f(snapshot.z2)}`, `ŷ = sigmoid(z_out) = ${f(snapshot.yHat)}`],
-      detail: `The network currently assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.`
+      plainMath: [
+        `z_out = ${outputNumeric} + ${f(params.b2)} = ${f(snapshot.z2)}`,
+        `ŷ = 1 / (1 + e^${f(-snapshot.z2)}) = ${f(snapshot.yHat)}`
+      ],
+      detail: `The network assigns ${(snapshot.yHat*100).toFixed(1)}% probability to spam.`
     },
     "scene-loss": {
       latex: [
-        `\\mathrm{BCE} = -[y\\ln\\hat y +(1-y)\\ln(1-\\hat y)]`,
-        `\\mathcal{L} = ${f(snapshot.loss)}`
+        `\\mathcal{L} = -[1\\ln(${f(snapshot.yHat)}) + 0\\ln(1-${f(snapshot.yHat)})]`,
+        `\\mathcal{L} = -\\ln(${f(snapshot.yHat)}) = ${f(snapshot.loss)}`
       ],
-      plainMath: ["BCE loss = -[y ln(ŷ) + (1-y) ln(1-ŷ)]", `loss = ${f(snapshot.loss)}`],
-      detail: "The target is y = 1 (spam)."
+      plainMath: [
+        `BCE = -[1·ln(${f(snapshot.yHat)}) + 0·ln(1-${f(snapshot.yHat)})]`,
+        `loss = -ln(${f(snapshot.yHat)}) = ${f(snapshot.loss)}`
+      ],
+      detail: "Because this email is spam, y = 1 and BCE simplifies to -ln(ŷ)."
     },
     "scene-backprop": {
       latex: [
-        `\\frac{\\partial \\mathcal{L}}{\\partial z_{out}} = \\hat y-y = ${signed(grads.dz2)}`,
-        `\\frac{\\partial \\mathcal{L}}{\\partial v_1} = ${signed(grads.dW2[0])}`
+        `\\frac{\\partial \\mathcal{L}}{\\partial z_{out}} = ${f(snapshot.yHat)} - 1 = ${signed(grads.dz2)}`,
+        `\\frac{\\partial \\mathcal{L}}{\\partial v_1} = (${signed(grads.dz2)})(${f(snapshot.h[0])}) = ${signed(grads.dW2[0])}`
       ],
       plainMath: [
-        `∂L/∂z_out = ŷ - y = ${signed(grads.dz2)}`,
-        `gradient ∂L/∂v1 = ${signed(grads.dW2[0])}`
+        `∂L/∂z_out = ${f(snapshot.yHat)} - 1 = ${signed(grads.dz2)}`,
+        `∂L/∂v1 = ${signed(grads.dz2)} × ${f(snapshot.h[0])} = ${signed(grads.dW2[0])}`
       ],
-      detail: "The direction reverses: gradients travel from the loss toward earlier parameters."
+      detail: `For h3, ReLU'(-0.090)=0, so its incoming weight gradients are zero in this step.`
     },
     "scene-update": {
       latex: [
-        `v_1' = v_1 - \\eta \\frac{\\partial \\mathcal{L}}{\\partial v_1}`,
-        `${f(params.W2[0])} - ${learningRate.toFixed(2)}(${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`
+        `v_1' = 0.600 - 0.10(${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`,
+        `\\Delta v_1 = ${signed(nextParams.W2[0]-params.W2[0])}`
       ],
       plainMath: [
-        "v1 new = v1 old - eta × gradient",
-        `${f(params.W2[0])} - ${learningRate.toFixed(2)} × (${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`,
-        `Δ = ${signed(nextParams.W2[0]-params.W2[0])}`
+        `v1 new = ${f(params.W2[0])} - ${learningRate.toFixed(2)} × (${signed(grads.dW2[0])}) = ${f(nextParams.W2[0])}`,
+        `Δv1 = ${signed(nextParams.W2[0]-params.W2[0])}`
       ],
-      detail: `η = ${learningRate.toFixed(2)}. The parameter moves opposite its gradient.`
+      detail: `The negative gradient makes v1 increase by ${f(nextParams.W2[0]-params.W2[0])}.`
     },
     "scene-training": {
       latex: [`\\text{forward} \\rightarrow \\mathcal{L} \\rightarrow \\text{backprop} \\rightarrow \\text{update} \\rightarrow \\cdots`],
