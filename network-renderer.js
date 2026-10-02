@@ -262,6 +262,11 @@ export function createNetworkRenderer(svg, {
     [...neurons.inputs,...neurons.hidden,neurons.output].forEach((n) => {
       n.g.classList.remove("is-active","is-receiving","is-gradient","is-updated","is-zeroed");
     });
+    if (snapshot) {
+      neurons.hidden.forEach((n, i) => {
+        n.preEl.textContent = `z=${snapshot.z1[i].toFixed(3)}`;
+      });
+    }
     neurons.loss.g.classList.remove("is-active","is-gradient","is-updated");
     connections.forEach((conn) => {
       conn.group.classList.remove("is-forward","is-gradient","is-updated","is-emphasized");
@@ -273,6 +278,17 @@ export function createNetworkRenderer(svg, {
       }
     });
     signalLayer.replaceChildren();
+  }
+
+  function applyHiddenActivationStates() {
+    neurons.hidden.forEach((n, i) => {
+      if (n.g.dataset.zeroed === "true") {
+        n.g.classList.add("is-zeroed");
+        n.preEl.textContent = `z=${snapshot.z1[i].toFixed(3)} → ReLU=0`;
+      } else {
+        n.g.classList.add("is-active");
+      }
+    });
   }
 
   function applyScene(sceneId, { immediate=false } = {}) {
@@ -301,13 +317,13 @@ export function createNetworkRenderer(svg, {
     }
 
     if (sceneId === "scene-relu") {
-      neurons.hidden.forEach((n) => n.g.classList.add(n.g.dataset.zeroed === "true" ? "is-zeroed" : "is-active"));
+      applyHiddenActivationStates();
       connections.forEach((conn) => { if (conn.kind === "ih") conn.group.classList.add("is-forward"); });
       return;
     }
 
     if (sceneId === "scene-output") {
-      neurons.hidden.forEach((n) => n.g.classList.add(n.g.dataset.zeroed === "true" ? "is-zeroed" : "is-active"));
+      applyHiddenActivationStates();
       neurons.output.g.classList.add("is-receiving");
       connections.forEach((conn) => {
         if (conn.kind === "ho") {
