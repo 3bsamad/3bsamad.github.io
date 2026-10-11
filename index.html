@@ -1,199 +1,164 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Interactive neural-network learning lab for forward pass, loss, backpropagation, gradients and gradient descent." />
-  <meta name="theme-color" content="#080a0f" />
-  <title>ML Visual Lab | Neural Network Spam Classifier</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Omar Elshenoudy, AI Engineer</title>
+<meta name="theme-color" content="#1B0B4D">
+<link rel="canonical" href="https://3bsamad.github.io/">
+<meta property="og:title" content="Omar Elshenoudy, AI Engineer">
+<meta property="og:description" content="LLM and RAG systems, real-time 3D perception, and computer vision. Explore my work through Omar OS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://3bsamad.github.io/">
+<meta name="description" content="Omar Elshenoudy: AI Engineer in Munich. LLM and RAG systems, 3D LiDAR perception, computer vision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand-block">
-        <div class="brand-mark" aria-hidden="true">ML</div>
-        <div class="brand-copy">
-          <p class="eyebrow">ML Visual Lab</p>
-          <h1>See a neural network think.</h1>
-          <p class="brand-subtitle">Forward pass, loss, backpropagation and gradient descent, visualized step by step.</p>
-        </div>
+
+<a class="skip-link" href="#w-about">Skip to portfolio</a>
+<main class="desktop" id="desktop" aria-label="Omar OS portfolio">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="menubar" role="banner">
+    <span class="mi apple" aria-hidden="true">✦</span>
+    <span class="mi"><b>Omar&nbsp;OS</b></span>
+    <button class="mi" data-open="projects">Projects</button>
+    <a class="mi" href="ml-lab/">ML Lab</a>
+    <a class="mi github-menu" href="https://github.com/3bsamad" rel="me">GitHub</a>
+    <span class="right"><span class="clock" id="clock">--:--</span></span>
+  </header>
+
+  <!-- desktop icons -->
+  <nav class="icons" aria-label="Desktop">
+    <button class="icon" data-open="about" aria-label="Open About">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><rect x="6" y="4" width="44" height="48" fill="#fff" stroke="#000" stroke-width="2"/><path d="M14 16h28M14 24h28M14 32h20" stroke="#B967FF" stroke-width="3"/></svg>
+      <span class="label">About Me</span>
+    </button>
+    <button class="icon" data-open="work" aria-label="Open Work">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><rect x="4" y="12" width="48" height="36" fill="#FFFB96" stroke="#000" stroke-width="2"/><path d="M4 22h48" stroke="#000" stroke-width="2"/><rect x="22" y="8" width="12" height="8" fill="#FF71CE" stroke="#000" stroke-width="2"/></svg>
+      <span class="label">Work</span>
+    </button>
+    <button class="icon" data-open="projects" aria-label="Open Projects">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><rect x="6" y="6" width="18" height="18" fill="#FF71CE" stroke="#000" stroke-width="2"/><rect x="32" y="6" width="18" height="18" fill="#01CDFE" stroke="#000" stroke-width="2"/><rect x="6" y="32" width="18" height="18" fill="#05FFA1" stroke="#000" stroke-width="2"/><rect x="32" y="32" width="18" height="18" fill="#FFFB96" stroke="#000" stroke-width="2"/></svg>
+      <span class="label">Projects</span>
+    </button>
+    <button class="icon" data-open="impact" aria-label="Open Impact">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><rect x="6" y="6" width="44" height="44" fill="#fff" stroke="#000" stroke-width="2"/><path d="M12 42v-8M22 42V26M32 42V18M42 42V30" stroke="#000" stroke-width="5"/></svg>
+      <span class="label">Impact</span>
+    </button>
+    <button class="icon" data-open="education" aria-label="Open Education">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><path d="M28 8 L52 20 L28 32 L4 20 Z" fill="#B967FF" stroke="#000" stroke-width="2"/><path d="M14 26v12c8 6 20 6 28 0V26" fill="#fff" stroke="#000" stroke-width="2"/></svg>
+      <span class="label">Education</span>
+    </button>
+    <button class="icon" data-open="contact" aria-label="Open Contact">
+      <svg class="glyph" viewBox="0 0 56 56" aria-hidden="true"><rect x="4" y="14" width="48" height="30" fill="#fff" stroke="#000" stroke-width="2"/><path d="M4 14l24 18 24-18" fill="none" stroke="#000" stroke-width="2"/></svg>
+      <span class="label">Contact</span>
+    </button>
+  </nav>
+
+  <!-- windows -->
+  <section class="win" id="w-about" tabindex="-1" aria-label="About Me" style="left:300px; top:70px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">About Me</span><span class="stripes"></span></div>
+    <div class="body">
+      <p class="mono">AI Engineer · Munich · Vol. 01</p>
+      <h1>Omar Elshenoudy</h1>
+      <p>AI Engineer combining enterprise LLM and RAG systems with applied machine learning, deep learning, and 2D/3D computer vision.</p>
+      <p>Built an AI Copilot using LangChain, Ollama, ChromaDB, and Neo4j for knowledge retrieval and Terraform Infrastructure-as-Code generation. Brings end-to-end experience across data preparation, model training, evaluation, integration, and production deployment.</p>
+      <p class="quick-links"><button class="btn def" data-open="projects">Explore projects</button> <button class="btn" data-open="contact">Let’s talk</button></p>
+      <h2 class="subheading">Core competencies</h2>
+      <p><span class="tag">LLM &amp; RAG</span><span class="tag">AI Copilots</span><span class="tag">LangChain &amp; Ollama</span><span class="tag">Vector &amp; knowledge-graph retrieval</span><span class="tag">Production ML</span><span class="tag">Deep learning</span><span class="tag">2D/3D computer vision</span><span class="tag">Model training &amp; evaluation</span><span class="tag">3D LiDAR perception</span><span class="tag">Python &amp; Linux</span></p>
+      <h2 class="subheading">Languages</h2>
+      <p>Arabic (native) · English (C1/C2) · German (C1) · Spanish (A2)</p>
+    </div>
+  </section>
+
+  <section class="win" id="w-work" tabindex="-1" aria-label="Work" style="left:340px; top:90px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">Work</span><span class="stripes"></span></div>
+    <div class="body">
+      <h2>Work</h2>
+      <div class="rowitem"><span class="yr">2025 — now</span><div><div class="co">NewSense Engineering</div><p>Perception Software Engineer, Munich. Real-time 3D LiDAR perception, from requirements through production deployment.</p></div></div>
+      <div class="rowitem"><span class="yr">2024</span><div><div class="co">TRUSTEQ</div><p>AI Developer (Working Student), Munich. Enterprise AI Copilot for knowledge retrieval and Terraform IaC generation.</p></div></div>
+      <div class="rowitem"><span class="yr">2022 — 24</span><div><div class="co">BMW Group</div><p>Research Intern, Deep Learning &amp; Computer Vision, Munich. 6D pose estimation, multi-GPU training, CES 2024 AR platform.</p></div></div>
+      <div class="rowitem"><span class="yr">2022</span><div><div class="co">Dromni AI</div><p>Deep Learning Researcher, Munich. RGB-D datasets and depth completion for LiDAR volumetric capture.</p></div></div>
+      <div class="rowitem"><span class="yr">2021 — 22</span><div><div class="co">Fraunhofer IIS</div><p>Machine Learning Researcher, Munich. Survival analysis and Remaining Useful Life prediction.</p></div></div>
+      <div class="rowitem"><span class="yr">2019 — 20</span><div><div class="co">Fraunhofer IPA / IFF</div><p>Research Assistant, Robotics &amp; Computer Vision, Stuttgart. RGB-D datasets and annotation workflows for industrial vision.</p></div></div>
+    </div>
+  </section>
+
+  <section class="win" id="w-projects" tabindex="-1" aria-label="Projects" style="left:260px; top:60px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">Projects</span><span class="stripes"></span></div>
+    <div class="body">
+      <h2>Projects</h2>
+      <div class="pcard hl"><h3>Munich Airport perimeter security</h3><p>LiDAR-based perception deployed for perimeter security at Munich Airport, built under real-time and edge-computing constraints.</p><span class="tag">LiDAR</span><span class="tag">Point clouds</span><span class="tag">Real-time</span></div>
+      <div class="pcard pk"><h3>AI Copilot</h3><p>Enterprise knowledge retrieval and Terraform IaC generation, combining vector search with knowledge-graph retrieval.</p><span class="tag">LangChain</span><span class="tag">Ollama</span><span class="tag">ChromaDB</span><span class="tag">Neo4j</span></div>
+      <div class="pcard cy"><h3>RAG from scratch</h3><p>Rebuilding the retrieval half of a RAG system from scratch on the SciFact benchmark, with baseline metrics tracked from the start.</p><span class="tag">Retrieval</span><span class="tag">SciFact</span><span class="tag">Evaluation</span><p class="project-link"><a href="https://github.com/3bsamad/rag-from-scratch">View RAG from Scratch on GitHub ↗</a></p></div>
+      <div class="pcard mt"><h3>Gothic platformer</h3><p>A Windows-first gothic platformer built in Godot 4, currently in development.</p><span class="tag">Godot 4</span><span class="tag">Game design</span></div>
+      <div class="pcard"><h3>AWS ML sandbox</h3><p>A hands-on cloud ML environment: S3, boto3 workflows and ECR experiments.</p><span class="tag">AWS</span><span class="tag">S3</span><span class="tag">boto3</span></div>
+      <div class="pcard"><h3>DrugLens</h3><p>A medication information assistant using NIH RxNorm and OpenFDA drug labels, with drug lookup and label-based interaction checks.</p><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">OpenFDA</span><p class="project-link"><a href="https://github.com/3bsamad/DrugLens">View DrugLens on GitHub ↗</a></p></div>
+      <div class="pcard"><h3>Pixel Playground</h3><p>Small computer vision utilities, including batch image resizing with OpenCV or Pillow backends.</p><span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Pillow</span><p class="project-link"><a href="https://github.com/3bsamad/Pixel-Playground">View Pixel Playground on GitHub ↗</a></p></div>
+      <div class="pcard cy"><h3>ML Visual Lab</h3><p>An interactive neural-network lesson: follow a spam classifier through its forward pass, loss, backpropagation, and gradient-descent updates, entirely in your browser.</p><span class="tag">JavaScript</span><span class="tag">Neural networks</span><span class="tag">Interactive learning</span><p class="project-link"><a href="ml-lab/">Open ML Visual Lab ↗</a></p></div>
+      <div class="pcard pk"><h3>6D pose estimation (BMW)</h3><p>Pose-estimation pipelines using PoET, geometry-based models, YOLO and DETR. Rotation accuracy improved by up to 57.9% compared with legacy baselines.</p><span class="tag">PoET</span><span class="tag">YOLO</span><span class="tag">DETR</span><span class="tag">Weights &amp; Biases</span></div>
+    </div>
+  </section>
+
+  <section class="win" id="w-impact" tabindex="-1" aria-label="Impact" style="left:420px; top:120px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">Impact</span><span class="stripes"></span></div>
+    <div class="body">
+      <h2>Impact</h2>
+      <div class="stats">
+        <div class="stat"><b>57.9%</b><span class="mono">rotation accuracy gain, BMW</span></div>
+        <div class="stat"><b>6</b><span class="mono">roles across CV, RAG &amp; perception</span></div>
+        <div class="stat"><b>TUM</b><span class="mono">M.Sc. Robotics, Cognition, Intelligence</span></div>
+        <div class="stat"><b>CES</b><span class="mono">2024, BMW Augmented Ride AR platform</span></div>
       </div>
+      <h2 class="subheading">Also</h2>
+      <p>Co-authored registered patents in automotive AR and computer vision at BMW Group.</p>
+    </div>
+  </section>
 
-      <div class="header-meta" aria-label="Teaching network">
-        <span class="tech-pill"><span>Network</span><strong>4 · 3 · 1</strong></span>
-        <span class="tech-pill"><span>Hidden</span><strong>ReLU</strong></span>
-        <span class="tech-pill"><span>Output</span><strong>Sigmoid + BCE</strong></span>
-      </div>
-    </header>
+  <section class="win" id="w-education" tabindex="-1" aria-label="Education" style="left:380px; top:150px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">Education</span><span class="stripes"></span></div>
+    <div class="body">
+      <h2>Education</h2>
+      <h3>M.Sc. Robotics, Cognition, Intelligence</h3>
+      <p class="mono">Technical University of Munich · 2024</p>
+      <p>Focus: Machine Learning, Computer Vision, Robotics.</p>
+      <h3>B.Sc. Mechatronics</h3>
+      <p class="mono">University of Stuttgart · 2020</p>
+      <p>Deutschlandstipendium scholarship, 2018–2019.</p>
+    </div>
+  </section>
 
-    <section class="task-card" aria-labelledby="task-title">
-      <div class="task-intro">
-        <p class="section-kicker">The task</p>
-        <h2 id="task-title">Spam or not spam?</h2>
-        <p>Turn one email into four numeric features and learn a binary classifier.</p>
-      </div>
+  <section class="win" id="w-contact" tabindex="-1" aria-label="Contact" style="left:460px; top:200px">
+    <div class="titlebar"><button class="close" aria-label="Close window"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9" stroke="#000" stroke-width="1.6"/></svg></button><span class="stripes"></span><span class="ttl">Contact</span><span class="stripes"></span></div>
+    <div class="body">
+      <p class="mono">Munich, Germany</p>
+      <h2 style="font-size:26px; word-break:break-word">omarasamad1997@gmail.com</h2>
+      <p style="margin-top:14px">
+        <a class="btn def" href="mailto:omarasamad1997@gmail.com">Send email</a>
+        <a class="btn" href="https://linkedin.com/in/omarasamad" rel="me">LinkedIn</a>
+        <a class="btn" href="https://github.com/3bsamad" rel="me">GitHub</a>
+      </p>
+    </div>
+  </section>
 
-      <div class="sample-area">
-        <div class="sample-picker">
-          <label for="sampleSelect">Sample email</label>
-          <select id="sampleSelect"></select>
-        </div>
-        <blockquote id="emailText" class="email-text"></blockquote>
-      </div>
+  <footer class="desktop-note">© 2026 Omar Elshenoudy · Munich, Germany</footer>
 
-      <div class="target-area">
-        <span class="field-label">Ground truth</span>
-        <strong id="targetLabel" class="target-value"></strong>
-        <span class="target-help">y ∈ {0, 1}</span>
-      </div>
+  <!-- dock -->
+  <nav class="dock" aria-label="Dock">
+    <button data-open="about" aria-label="About Me"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="4" y="2" width="36" height="40" rx="6" fill="#fff" stroke="#000" stroke-width="2"/><path d="M11 14h22M11 21h22M11 28h14" stroke="#B967FF" stroke-width="3"/></svg></button>
+    <button data-open="work" aria-label="Work"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="2" y="10" width="40" height="28" rx="4" fill="#FFFB96" stroke="#000" stroke-width="2"/></svg></button>
+    <button data-open="projects" aria-label="Projects"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="4" y="4" width="16" height="16" fill="#FF71CE" stroke="#000" stroke-width="2"/><rect x="24" y="4" width="16" height="16" fill="#01CDFE" stroke="#000" stroke-width="2"/><rect x="4" y="24" width="16" height="16" fill="#05FFA1" stroke="#000" stroke-width="2"/><rect x="24" y="24" width="16" height="16" fill="#FFFB96" stroke="#000" stroke-width="2"/></svg></button>
+    <button data-open="impact" aria-label="Impact"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="4" y="4" width="36" height="36" fill="#fff" stroke="#000" stroke-width="2"/><path d="M10 34v-6M18 34V20M26 34V12M34 34v-10" stroke="#000" stroke-width="4"/></svg></button>
+    <button data-open="contact" aria-label="Contact"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="3" y="10" width="38" height="24" fill="#fff" stroke="#000" stroke-width="2"/><path d="M3 10l19 14 19-14" fill="none" stroke="#000" stroke-width="2"/></svg></button>
+  </nav>
+</main>
 
-      <div id="featureRow" class="feature-row" aria-label="Input features"></div>
-    </section>
-
-    <section class="workspace" aria-labelledby="solution-title">
-      <div class="workspace-head">
-        <div>
-          <p class="section-kicker">Training loop</p>
-          <h2 id="solution-title">Follow one sample through the network</h2>
-        </div>
-        <div class="legend" aria-label="Visualization legend">
-          <span><i class="legend-line forward-line"></i>forward signal</span>
-          <span><i class="legend-line gradient-line"></i>gradient</span>
-          <span><i class="legend-line update-line"></i>updated parameter</span>
-        </div>
-      </div>
-
-      <nav class="step-rail" id="stepRail" aria-label="Lesson steps"></nav>
-
-      <div class="workspace-main">
-        <section class="network-panel" aria-label="Neural network visualization">
-          <div class="network-toolbar">
-            <div class="phase-indicator">
-              <span class="pulse-dot" id="phaseDot"></span>
-              <strong id="phaseLabel">Ready</strong>
-            </div>
-            <div class="network-hints">
-              <span><b>w</b> weight</span>
-              <span><b>g</b> ∂L/∂w</span>
-              <span><b>Δ</b> parameter update</span>
-            </div>
-          </div>
-
-          <div class="network-wrap">
-            <svg id="networkSvg" viewBox="0 0 1080 520" role="img" aria-label="Interactive feedforward neural network"></svg>
-          </div>
-        </section>
-
-        <aside class="explain-panel">
-          <div class="explain-header">
-            <div>
-              <span class="field-label" id="stepCounter"></span>
-              <h3 id="stepTitle"></h3>
-            </div>
-            <div class="step-kind" id="stepKind"></div>
-          </div>
-
-          <p id="stepDescription" class="step-description"></p>
-
-          <div class="formula-box" id="formulaBox"></div>
-
-          <div class="parameter-inspector" id="parameterInspector">
-            <div class="inspector-title">
-              <span class="field-label">Parameter inspector</span>
-              <span id="inspectorHint">Weights become trainable because gradients tell us how to move them.</span>
-            </div>
-            <div id="parameterRows" class="parameter-rows"></div>
-          </div>
-
-          <div class="why-box">
-            <span class="field-label">Why it matters</span>
-            <p id="whyText"></p>
-          </div>
-        </aside>
-      </div>
-
-      <div class="control-dock">
-        <div class="lesson-controls">
-          <button id="prevStep" class="btn icon-btn" aria-label="Previous lesson step">Previous</button>
-          <button id="nextStep" class="btn primary">Next concept</button>
-          <button id="autoPlay" class="btn secondary">Play lesson</button>
-          <button id="restartLesson" class="btn ghost">Restart lesson</button>
-        </div>
-
-        <div class="divider" aria-hidden="true"></div>
-
-        <div class="training-controls">
-          <span class="control-label">Run</span>
-          <button id="runForward" class="btn phase-btn forward-btn">Forward</button>
-          <button id="runBackprop" class="btn phase-btn backprop-btn">Backprop</button>
-          <button id="updateWeights" class="btn phase-btn update-btn">Update weights</button>
-          <button id="trainTen" class="btn secondary">Train 10 epochs</button>
-          <button id="resetWeights" class="btn ghost">Reset</button>
-        </div>
-
-        <div class="lr-control">
-          <label for="learningRate">Learning rate <b>η</b></label>
-          <div class="slider-line">
-            <input id="learningRate" type="range" min="0.01" max="0.50" step="0.01" value="0.10" />
-            <output id="learningRateOutput">0.10</output>
-          </div>
-        </div>
-      </div>
-
-      <div class="result-strip" aria-live="polite">
-        <div class="metric">
-          <span>Prediction</span>
-          <strong id="predictionValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Target</span>
-          <strong id="targetValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Loss</span>
-          <strong id="lossValue">–</strong>
-        </div>
-        <div class="metric">
-          <span>Learning rate</span>
-          <strong id="learningRateValue">0.10</strong>
-        </div>
-        <div class="before-after">
-          <div>
-            <span>Before update</span>
-            <strong id="beforeSummary">–</strong>
-          </div>
-          <div class="history-arrow">→</div>
-          <div>
-            <span>After update</span>
-            <strong id="afterSummary">–</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="dataset-section">
-      <details>
-        <summary>Inspect the tiny teaching dataset</summary>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Suspicious words</th>
-                <th>Links</th>
-                <th>Sender trust</th>
-                <th>Urgency</th>
-                <th>Target</th>
-              </tr>
-            </thead>
-            <tbody id="datasetTableBody"></tbody>
-          </table>
-        </div>
-      </details>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
+<script src="app.js" defer></script>
 </body>
 </html>

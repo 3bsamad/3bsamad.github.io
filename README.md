@@ -1,90 +1,45 @@
-# ML Visual Lab — Neural Network Spam Classifier
+# Omar Elshenoudy — Portfolio
 
-An interactive, browser-only learning tool for understanding a feedforward neural network from the inside.
+A static portfolio based on Omar's supplied retro macOS / vaporwave template.
 
-The first lesson uses a tiny **spam vs not-spam** classification problem and exposes the full loop:
+- `/`: Omar OS desktop, with About, Work, Projects, Impact, Education and Contact windows.
+- `/ml-lab/`: the original ML Visual Lab. Its HTML, CSS and JavaScript are preserved from commit `19ff31218fda53c2ff1ebcbff2c86d8407470080`.
+- No build step, framework or server-side application is required.
+- Google Fonts supplies Pixelify Sans and JetBrains Mono; system fonts remain available if the font service cannot load.
 
-1. numeric inputs
-2. weighted sums
-3. ReLU activation
-4. output logit
-5. sigmoid probability
-6. binary cross-entropy loss
-7. backpropagation
-8. gradient-descent update
+## Preview
 
-## What makes this visualizer different
+Serve this directory with any static server, for example:
 
-The network does not just draw circles and arrows:
-
-- weights are printed directly on their connections
-- during backprop, every connection shows its gradient `g = ∂L/∂w`
-- during the update step, each connection also shows `Δ = -ηg`
-- forward and backward signal flow is animated in opposite directions
-- a parameter inspector shows value, gradient and update side-by-side
-- prediction and loss are shown before and after updates
-
-## Stack
-
-No framework is required.
-
-```text
-index.html
-styles.css
-app.js
-```
-
-Everything runs client-side, making the project ideal for GitHub Pages.
-
-## Run locally
-
-```bash
+```sh
 python -m http.server 8000
 ```
 
-Then open:
+Visit `http://localhost:8000` and `http://localhost:8000/ml-lab/`.
 
-```text
-http://localhost:8000
+## GitHub Pages
+
+In this repository's **Settings → Pages**, use **Deploy from a branch**, **main**, **/(root)**. If Pages already uses those settings, merging the portfolio change publishes it automatically. Keep the existing publishing configuration if it already serves this root.
+
+The intended portfolio URL is https://3bsamad.github.io/ and the lab URL is https://3bsamad.github.io/ml-lab/.
+
+The empty `.nojekyll` file makes the site publish as plain static files.
+
+## Browser checks
+
+Install the browser testing dependency locally (it is only needed for checks):
+
+```sh
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+node verify.cjs
 ```
 
-## Deploy on GitHub Pages
+The checks cover window navigation at 320, 768, 1024 and 1440 pixels; keyboard focus; drag and resize recovery; content without JavaScript; and a real training update in the preserved lab. `node verify.cjs --local` reads the local HTML files directly where localhost access is unavailable.
 
-1. Create a public GitHub repository.
-2. Put the repository files in the root of `main`.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment** choose:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/(root)`
-5. Save.
+## Updating content
 
-The page will be available at:
+Edit `index.html` for biography, experience, projects and contact information. Edit `styles.css` for the supplied template's appearance and `app.js` for window controls.
 
-```text
-https://YOUR_USERNAME.github.io/YOUR_REPOSITORY_NAME/
-```
+The project descriptions for DrugLens, Pixel Playground and RAG from Scratch are based on their repository READMEs. Employment achievements, education and language proficiency come from Omar's supplied portfolio. The `3bsamad` repository is a GitHub profile README, so the template's unfinished “personal site” card has been replaced with the preserved ML Visual Lab.
 
-## Teaching network
-
-```text
-4 handcrafted email features
-          ↓
-3 hidden neurons + ReLU
-          ↓
-1 output neuron + sigmoid
-          ↓
-P(spam)
-```
-
-Binary cross-entropy is used as the loss, with vanilla gradient descent for parameter updates.
-
-## Good next modules
-
-- XOR: why hidden layers and nonlinearities matter
-- activation playground: ReLU vs sigmoid vs tanh
-- optimizer playground: SGD vs momentum vs Adam
-- regression: MSE and gradient descent on a line
-- multiclass classification: logits + softmax + cross entropy
-- convolution visualizer
-- attention visualizer
