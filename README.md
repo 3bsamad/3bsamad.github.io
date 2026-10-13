@@ -3,7 +3,7 @@
 A static portfolio based on Omar's supplied retro macOS / vaporwave template.
 
 - `/`: Omar OS desktop, with About, Work, Projects, Impact, Education and Contact windows.
-- `/ml-lab/`: the original ML Visual Lab. Its HTML, CSS and JavaScript are preserved from commit `19ff31218fda53c2ff1ebcbff2c86d8407470080`.
+- `/ml-lab/`: the currently published V2 ML Visual Lab, preserved from deployment commit `51af6a234367b352edd71dc49239fffb61c5e305` on `visual/scrollytelling-v2`, including its modules and tests.
 - No build step, framework or server-side application is required.
 - Google Fonts supplies Pixelify Sans and JetBrains Mono; system fonts remain available if the font service cannot load.
 

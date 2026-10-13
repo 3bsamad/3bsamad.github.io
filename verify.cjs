@@ -74,14 +74,21 @@ const server = createServer((req, res) => {
     await page.close();
   });
   await run('ML lab still runs from subdirectory', async () => {
-    const page = await browser.newPage();
+    const page = await browser.newPage({reducedMotion:'reduce'});
     const errors=[]; page.on('pageerror',e=>errors.push(e.message));
     await page.goto(new URL('ml-lab/index.html', url).href);
-    await page.locator('#runForward').click();
-    const loss = await page.locator('#lossValue').innerText();
+    await page.locator('#sceneNav [data-scene="scene-loss"]').click();
+    await page.waitForFunction(() => document.body.dataset.scene === 'scene-loss');
+    const loss = await page.locator('#lossMetric').innerText();
     assert(Number.isFinite(Number(loss)) && Number(loss) > 0, 'no valid loss');
-    await page.locator('#trainTen').click();
-    assert((await page.locator('#lossValue').innerText()) !== loss, 'training did not change loss');
+    await page.locator('#sceneNav [data-scene="scene-update"]').click();
+    await page.waitForFunction(() => document.body.dataset.scene === 'scene-update');
+    const update = (await page.locator('#lossMetric').innerText()).split('→').map(Number);
+    assert(update.length === 2 && update[1] < update[0], 'update did not reduce loss');
+    await page.locator('#sceneNav [data-scene="scene-training"]').click();
+    await page.waitForFunction(() => document.body.dataset.scene === 'scene-training');
+    assert(await page.locator('#trainingFinale').isVisible(), 'training finale not visible');
+    assert((await page.locator('#lossChart path').count()) > 0, 'training curve missing');
     assert.deepEqual(errors, []);
     await page.close();
   });

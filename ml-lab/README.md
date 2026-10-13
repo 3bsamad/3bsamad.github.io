@@ -1,90 +1,61 @@
-# ML Visual Lab — Neural Network Spam Classifier
+# ML Visual Lab
 
-An interactive, browser-only learning tool for understanding a feedforward neural network from the inside.
+A browser-only, scroll-driven neural-network explainer built as a visual teaching project.
 
-The first lesson uses a tiny **spam vs not-spam** classification problem and exposes the full loop:
+The public V2 story deliberately follows **one spam email** through the complete learning cycle:
 
-1. numeric inputs
-2. weighted sums
-3. ReLU activation
-4. output logit
-5. sigmoid probability
-6. binary cross-entropy loss
-7. backpropagation
-8. gradient-descent update
+1. input features
+2. weighted connections
+3. ReLU
+4. output logit + sigmoid
+5. binary cross-entropy loss
+6. backpropagation
+7. gradient-descent update
+8. repeated training
 
-## What makes this visualizer different
+## What makes V2 different
 
-The network does not just draw circles and arrows:
+The network is a **persistent SVG**, not a diagram rebuilt on every step. Neurons, connections, values and signal layers stay mounted while scroll scenes change their state.
 
-- weights are printed directly on their connections
-- during backprop, every connection shows its gradient `g = ∂L/∂w`
-- during the update step, each connection also shows `Δ = -ηg`
-- forward and backward signal flow is animated in opposite directions
-- a parameter inspector shows value, gradient and update side-by-side
-- prediction and loss are shown before and after updates
+Forward activations move through the network in blue. Gradients travel backward in violet. Parameter updates resolve in green. The visualization remains synchronized with real forward/backprop calculations from the small 4 → 3 → 1 teaching network.
+
+The initial public narrative uses a single canonical spam email so the visual choreography can stay coherent from the first input value to the final parameter update.
 
 ## Stack
 
-No framework is required.
+- HTML + CSS
+- vanilla JavaScript ES modules
+- SVG
+- GSAP + ScrollTrigger for enhanced scroll choreography
+- KaTeX for mathematical notation
+- Node's built-in test runner for model and static contracts
 
-```text
-index.html
-styles.css
-app.js
-```
+Everything remains suitable for GitHub Pages.
 
-Everything runs client-side, making the project ideal for GitHub Pages.
+## Architecture
 
-## Run locally
+- `model.js` — pure forward pass, backpropagation, gradient update and short training preview
+- `network-renderer.js` — persistent SVG neurons, connections, signal pulses and semantic states
+- `scene-content.js` — ordered lesson scenes and live math substitutions
+- `scroll-scenes.js` — ScrollTrigger / reduced-motion scene activation
+- `app.js` — application composition and view synchronization
+- `styles.css` — responsive visual system and computational state styling
+
+## Progressive enhancement
+
+The core lesson and network initialize without animation libraries. If GSAP/ScrollTrigger is unavailable, scene activation falls back to IntersectionObserver. If KaTeX is unavailable, readable plain-text equations remain visible.
+
+`prefers-reduced-motion` disables particle travel and long transitions while preserving the same lesson states.
+
+## Local verification
 
 ```bash
-python -m http.server 8000
+node --check app.js
+node --check model.js
+node --check network-renderer.js
+node --check scene-content.js
+node --check scroll-scenes.js
+node --test tests/*.test.mjs
 ```
 
-Then open:
-
-```text
-http://localhost:8000
-```
-
-## Deploy on GitHub Pages
-
-1. Create a public GitHub repository.
-2. Put the repository files in the root of `main`.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment** choose:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/(root)`
-5. Save.
-
-The page will be available at:
-
-```text
-https://YOUR_USERNAME.github.io/YOUR_REPOSITORY_NAME/
-```
-
-## Teaching network
-
-```text
-4 handcrafted email features
-          ↓
-3 hidden neurons + ReLU
-          ↓
-1 output neuron + sigmoid
-          ↓
-P(spam)
-```
-
-Binary cross-entropy is used as the loss, with vanilla gradient descent for parameter updates.
-
-## Good next modules
-
-- XOR: why hidden layers and nonlinearities matter
-- activation playground: ReLU vs sigmoid vs tanh
-- optimizer playground: SGD vs momentum vs Adam
-- regression: MSE and gradient descent on a line
-- multiclass classification: logits + softmax + cross entropy
-- convolution visualizer
-- attention visualizer
+Open `index.html` through a local static server to review the full scroll choreography.
