@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive neural-network learning lab for forward pass, loss, backpropagation, gradients and gradient descent." />
+  <meta name="theme-color" content="#080a0f" />
+  <title>ML Visual Lab | Neural Network Spam Classifier</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">ML</div>
+        <div class="brand-copy">
+          <p class="eyebrow">ML Visual Lab</p>
+          <h1>See a neural network think.</h1>
+          <p class="brand-subtitle">Forward pass, loss, backpropagation and gradient descent, visualized step by step.</p>
+        </div>
+      </div>
+
+      <div class="header-meta" aria-label="Teaching network">
+        <span class="tech-pill"><span>Network</span><strong>4 · 3 · 1</strong></span>
+        <span class="tech-pill"><span>Hidden</span><strong>ReLU</strong></span>
+        <span class="tech-pill"><span>Output</span><strong>Sigmoid + BCE</strong></span>
+      </div>
+    </header>
+
+    <section class="task-card" aria-labelledby="task-title">
+      <div class="task-intro">
+        <p class="section-kicker">The task</p>
+        <h2 id="task-title">Spam or not spam?</h2>
+        <p>Turn one email into four numeric features and learn a binary classifier.</p>
+      </div>
+
+      <div class="sample-area">
+        <div class="sample-picker">
+          <label for="sampleSelect">Sample email</label>
+          <select id="sampleSelect"></select>
+        </div>
+        <blockquote id="emailText" class="email-text"></blockquote>
+      </div>
+
+      <div class="target-area">
+        <span class="field-label">Ground truth</span>
+        <strong id="targetLabel" class="target-value"></strong>
+        <span class="target-help">y ∈ {0, 1}</span>
+      </div>
+
+      <div id="featureRow" class="feature-row" aria-label="Input features"></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="solution-title">
+      <div class="workspace-head">
+        <div>
+          <p class="section-kicker">Training loop</p>
+          <h2 id="solution-title">Follow one sample through the network</h2>
+        </div>
+        <div class="legend" aria-label="Visualization legend">
+          <span><i class="legend-line forward-line"></i>forward signal</span>
+          <span><i class="legend-line gradient-line"></i>gradient</span>
+          <span><i class="legend-line update-line"></i>updated parameter</span>
+        </div>
+      </div>
+
+      <nav class="step-rail" id="stepRail" aria-label="Lesson steps"></nav>
+
+      <div class="workspace-main">
+        <section class="network-panel" aria-label="Neural network visualization">
+          <div class="network-toolbar">
+            <div class="phase-indicator">
+              <span class="pulse-dot" id="phaseDot"></span>
+              <strong id="phaseLabel">Ready</strong>
+            </div>
+            <div class="network-hints">
+              <span><b>w</b> weight</span>
+              <span><b>g</b> ∂L/∂w</span>
+              <span><b>Δ</b> parameter update</span>
+            </div>
+          </div>
+
+          <div class="network-wrap">
+            <svg id="networkSvg" viewBox="0 0 1080 520" role="img" aria-label="Interactive feedforward neural network"></svg>
+          </div>
+        </section>
+
+        <aside class="explain-panel">
+          <div class="explain-header">
+            <div>
+              <span class="field-label" id="stepCounter"></span>
+              <h3 id="stepTitle"></h3>
+            </div>
+            <div class="step-kind" id="stepKind"></div>
+          </div>
+
+          <p id="stepDescription" class="step-description"></p>
+
+          <div class="formula-box" id="formulaBox"></div>
+
+          <div class="parameter-inspector" id="parameterInspector">
+            <div class="inspector-title">
+              <span class="field-label">Parameter inspector</span>
+              <span id="inspectorHint">Weights become trainable because gradients tell us how to move them.</span>
+            </div>
+            <div id="parameterRows" class="parameter-rows"></div>
+          </div>
+
+          <div class="why-box">
+            <span class="field-label">Why it matters</span>
+            <p id="whyText"></p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="control-dock">
+        <div class="lesson-controls">
+          <button id="prevStep" class="btn icon-btn" aria-label="Previous lesson step">Previous</button>
+          <button id="nextStep" class="btn primary">Next concept</button>
+          <button id="autoPlay" class="btn secondary">Play lesson</button>
+          <button id="restartLesson" class="btn ghost">Restart lesson</button>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <div class="training-controls">
+          <span class="control-label">Run</span>
+          <button id="runForward" class="btn phase-btn forward-btn">Forward</button>
+          <button id="runBackprop" class="btn phase-btn backprop-btn">Backprop</button>
+          <button id="updateWeights" class="btn phase-btn update-btn">Update weights</button>
+          <button id="trainTen" class="btn secondary">Train 10 epochs</button>
+          <button id="resetWeights" class="btn ghost">Reset</button>
+        </div>
+
+        <div class="lr-control">
+          <label for="learningRate">Learning rate <b>η</b></label>
+          <div class="slider-line">
+            <input id="learningRate" type="range" min="0.01" max="0.50" step="0.01" value="0.10" />
+            <output id="learningRateOutput">0.10</output>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-strip" aria-live="polite">
+        <div class="metric">
+          <span>Prediction</span>
+          <strong id="predictionValue">–</strong>
+        </div>
+        <div class="metric">
+          <span>Target</span>
+          <strong id="targetValue">–</strong>
+        </div>
+        <div class="metric">
+          <span>Loss</span>
+          <strong id="lossValue">–</strong>
+        </div>
+        <div class="metric">
+          <span>Learning rate</span>
+          <strong id="learningRateValue">0.10</strong>
+        </div>
+        <div class="before-after">
+          <div>
+            <span>Before update</span>
+            <strong id="beforeSummary">–</strong>
+          </div>
+          <div class="history-arrow">→</div>
+          <div>
+            <span>After update</span>
+            <strong id="afterSummary">–</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dataset-section">
+      <details>
+        <summary>Inspect the tiny teaching dataset</summary>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Suspicious words</th>
+                <th>Links</th>
+                <th>Sender trust</th>
+                <th>Urgency</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody id="datasetTableBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
